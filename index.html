@@ -3,26 +3,162 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Whathink</title>
+  <title>Whathink - Tech & Education</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #2c3e50, #3498db);
-      color: white;
-      text-align: center;
-      padding: 100px;
-    }
-    h1 {
-      font-size: 50px;
-      margin-bottom: 20px;
-    }
-    p {
-      font-size: 22px;
+    /* Reset */
+    * { margin:0; padding:0; box-sizing:border-box; font-family: Arial, sans-serif;}
+    body { background: #f4f4f9; color: #333; scroll-behavior: smooth; }
+
+    /* Header */
+    header { background: #3498db; color: white; padding: 20px; text-align: center; }
+    header h1 { font-size: 36px; }
+    header p { font-size: 18px; margin-top: 5px; }
+
+    /* Navigation */
+    nav { display: flex; justify-content: center; background: #2980b9; flex-wrap: wrap; }
+    nav a { color: white; padding: 15px 20px; text-decoration: none; transition: background 0.3s; }
+    nav a:hover { background: #1f618d; }
+
+    /* Hero Section */
+    .hero { text-align: center; padding: 100px 20px; background: linear-gradient(to right, #2980b9, #6dd5fa); color: white; }
+    .hero h2 { font-size: 48px; margin-bottom: 20px; }
+    .hero p { font-size: 22px; margin-bottom: 30px; }
+    .hero button { padding: 12px 25px; font-size: 18px; border: none; border-radius: 5px; background: #f1c40f; color: #333; cursor: pointer; transition: background 0.3s; }
+    .hero button:hover { background: #d4ac0d; }
+
+    /* Features Section */
+    .features { display: flex; flex-wrap: wrap; justify-content: center; padding: 50px 20px; gap: 20px; }
+    .card { background: white; border-radius: 10px; padding: 25px; width: 300px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; }
+    .card:hover { transform: translateY(-5px); }
+    .card h3 { margin-bottom: 15px; }
+    .card p { font-size: 16px; }
+
+    /* About Section */
+    .about { padding: 50px 20px; text-align: center; }
+    .about h2 { font-size: 36px; margin-bottom: 20px; }
+    .about p { font-size: 18px; max-width: 800px; margin: auto; line-height: 1.6; }
+
+    /* Blog Section */
+    .blog { padding: 50px 20px; text-align: center; background: #ecf0f1; }
+    .blog h2 { font-size: 36px; margin-bottom: 30px; }
+    .blog .post { display: inline-block; background: white; padding: 20px; width: 250px; margin: 10px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s; }
+    .blog .post:hover { transform: translateY(-5px); }
+    .blog .post h4 { margin-bottom: 10px; }
+    .blog .post p { font-size: 14px; }
+
+    /* Contact Section */
+    .contact { padding: 50px 20px; text-align: center; }
+    .contact h2 { font-size: 36px; margin-bottom: 20px; }
+    .contact form { max-width: 500px; margin: auto; display: flex; flex-direction: column; gap: 15px; }
+    .contact input, .contact textarea { padding: 12px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; }
+    .contact button { padding: 12px; font-size: 18px; border: none; border-radius: 5px; background: #3498db; color: white; cursor: pointer; transition: background 0.3s; }
+    .contact button:hover { background: #2980b9; }
+
+    /* Footer */
+    footer { background: #2c3e50; color: white; text-align: center; padding: 20px; margin-top: 50px; }
+
+    /* Responsive */
+    @media(max-width: 768px){
+      .features, .blog { flex-direction: column; align-items: center; }
+      .hero h2 { font-size: 36px; }
+      .hero p { font-size: 18px; }
     }
   </style>
 </head>
 <body>
-  <h1>🚀 Whathink</h1>
-  <p>Coming Soon... The Future of Tech & Education</p>
+
+  <header>
+    <h1>Whathink</h1>
+    <p>Learn Tech & Education in a Fun Way</p>
+  </header>
+
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#features">Features</a>
+    <a href="#about">About</a>
+    <a href="#blog">Blog</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <section class="hero" id="home">
+    <h2>Welcome to Whathink</h2>
+    <p>Your hub for tech tutorials & educational content</p>
+    <button>Get Started</button>
+  </section>
+
+  <section class="features" id="features">
+    <div class="card">
+      <h3>Interactive Learning</h3>
+      <p>Step by step tutorials to make learning fun and easy.</p>
+    </div>
+    <div class="card">
+      <h3>Latest Tech</h3>
+      <p>Stay updated with trending technology & tools.</p>
+    </div>
+    <div class="card">
+      <h3>Community Support</h3>
+      <p>Learn together with a friendly community of learners.</p>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <h2>About Whathink</h2>
+    <p>Whathink is a platform dedicated to tech enthusiasts and learners. Our goal is to provide easy-to-understand tutorials, insights, and resources for anyone looking to grow in technology and education.</p>
+  </section>
+
+  <section class="blog" id="blog">
+    <h2>Latest Posts</h2>
+    <div class="post">
+      <h4>HTML Basics</h4>
+      <p>Learn the foundations of HTML to start your web development journey.</p>
+    </div>
+    <div class="post">
+      <h4>CSS Tips</h4>
+      <p>Enhance your web pages with simple but powerful CSS tricks.</p>
+    </div>
+    <div class="post">
+      <h4>JavaScript Intro</h4>
+      <p>Understand the basics of JavaScript for dynamic web applications.</p>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <h2>Contact Us</h2>
+    <form>
+      <input type="text" placeholder="Your Name" required>
+      <input type="email" placeholder="Your Email" required>
+      <textarea rows="5" placeholder="Your Message" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
+
+  <footer>
+    &copy; 2025 Whathink. All Rights Reserved.
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Hero button click
+    const heroBtn = document.querySelector(".hero button");
+    heroBtn.addEventListener("click", () => {
+      alert("Welcome to Whathink!");
+    });
+
+    // Contact form validation
+    const form = document.querySelector("form");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = form.querySelector('input[type="text"]').value;
+      const email = form.querySelector('input[type="email"]').value;
+      const message = form.querySelector('textarea').value;
+      if(name && email && message){
+        alert("Thank you! Your message has been sent.");
+        form.reset();
+      } else {
+        alert("Please fill all fields.");
+      }
+    });
+  </script>
+
 </body>
   </html>
