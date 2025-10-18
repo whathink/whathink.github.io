@@ -1,164 +1,914 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Whathink - Tech & Education</title>
-  <style>
-    /* Reset */
-    * { margin:0; padding:0; box-sizing:border-box; font-family: Arial, sans-serif;}
-    body { background: #f4f4f9; color: #333; scroll-behavior: smooth; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhaThink - AI-Powered Insights</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --bg-color: #f5f7fb;
+            --text-color: #212529;
+            --card-bg: #ffffff;
+            --header-bg: linear-gradient(135deg, #4361ee, #3a0ca3);
+            --footer-bg: #212529;
+            --input-bg: #ffffff;
+            --border-color: #e9ecef;
+        }
 
-    /* Header */
-    header { background: #3498db; color: white; padding: 20px; text-align: center; }
-    header h1 { font-size: 36px; }
-    header p { font-size: 18px; margin-top: 5px; }
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #e9ecef;
+            --card-bg: #1e1e1e;
+            --header-bg: linear-gradient(135deg, #2d3a8c, #1a0a5e);
+            --footer-bg: #0a0a0a;
+            --light-gray: #2d2d2d;
+            --gray: #a0a0a0;
+            --input-bg: #2d2d2d;
+            --border-color: #404040;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: var(--header-bg);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .logo i {
+            color: var(--success);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--success);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+        
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
 
-    /* Navigation */
-    nav { display: flex; justify-content: center; background: #2980b9; flex-wrap: wrap; }
-    nav a { color: white; padding: 15px 20px; text-decoration: none; transition: background 0.3s; }
-    nav a:hover { background: #1f618d; }
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            cursor: pointer;
+        }
 
-    /* Hero Section */
-    .hero { text-align: center; padding: 100px 20px; background: linear-gradient(to right, #2980b9, #6dd5fa); color: white; }
-    .hero h2 { font-size: 48px; margin-bottom: 20px; }
-    .hero p { font-size: 22px; margin-bottom: 30px; }
-    .hero button { padding: 12px 25px; font-size: 18px; border: none; border-radius: 5px; background: #f1c40f; color: #333; cursor: pointer; transition: background 0.3s; }
-    .hero button:hover { background: #d4ac0d; }
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 5px;
+            transition: all 0.3s;
+        }
 
-    /* Features Section */
-    .features { display: flex; flex-wrap: wrap; justify-content: center; padding: 50px 20px; gap: 20px; }
-    .card { background: white; border-radius: 10px; padding: 25px; width: 300px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; }
-    .card:hover { transform: translateY(-5px); }
-    .card h3 { margin-bottom: 15px; }
-    .card p { font-size: 16px; }
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: white;
+            transition: transform 0.3s;
+            top: 4px;
+            left: 4px;
+        }
 
-    /* About Section */
-    .about { padding: 50px 20px; text-align: center; }
-    .about h2 { font-size: 36px; margin-bottom: 20px; }
-    .about p { font-size: 18px; max-width: 800px; margin: auto; line-height: 1.6; }
+        [data-theme="dark"] .toggle-switch::before {
+            transform: translateX(30px);
+        }
 
-    /* Blog Section */
-    .blog { padding: 50px 20px; text-align: center; background: #ecf0f1; }
-    .blog h2 { font-size: 36px; margin-bottom: 30px; }
-    .blog .post { display: inline-block; background: white; padding: 20px; width: 250px; margin: 10px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s; }
-    .blog .post:hover { transform: translateY(-5px); }
-    .blog .post h4 { margin-bottom: 10px; }
-    .blog .post p { font-size: 14px; }
-
-    /* Contact Section */
-    .contact { padding: 50px 20px; text-align: center; }
-    .contact h2 { font-size: 36px; margin-bottom: 20px; }
-    .contact form { max-width: 500px; margin: auto; display: flex; flex-direction: column; gap: 15px; }
-    .contact input, .contact textarea { padding: 12px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; }
-    .contact button { padding: 12px; font-size: 18px; border: none; border-radius: 5px; background: #3498db; color: white; cursor: pointer; transition: background 0.3s; }
-    .contact button:hover { background: #2980b9; }
-
-    /* Footer */
-    footer { background: #2c3e50; color: white; text-align: center; padding: 20px; margin-top: 50px; }
-
-    /* Responsive */
-    @media(max-width: 768px){
-      .features, .blog { flex-direction: column; align-items: center; }
-      .hero h2 { font-size: 36px; }
-      .hero p { font-size: 18px; }
-    }
-  </style>
+        .toggle-icon {
+            font-size: 1.2rem;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, var(--bg-color) 0%, var(--card-bg) 100%);
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: var(--gray);
+        }
+        
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        /* Features Section */
+        .section {
+            padding: 5rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .section-title p {
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.8rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+        
+        /* AI Chat Section */
+        .ai-chat {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 3rem auto;
+            max-width: 1000px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .ai-chat h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .chat-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            background: var(--input-bg);
+        }
+        
+        .message {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        
+        .user-message {
+            background: var(--primary);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+        
+        .ai-message {
+            background: var(--light-gray);
+            color: var(--text-color);
+            border-bottom-left-radius: 0;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+        
+        .chat-input input:focus {
+            border-color: var(--primary);
+        }
+        
+        .chat-input button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0 2rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .chat-input button:hover {
+            background: var(--secondary);
+        }
+        
+        /* Tools Section */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .tool-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .tool-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        /* Pricing Section */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .pricing-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .pricing-card.popular {
+            border: 2px solid var(--primary);
+            transform: scale(1.05);
+        }
+        
+        .popular-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--accent);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-bottom-left-radius: 15px;
+        }
+        
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin: 1.5rem 0;
+        }
+        
+        .price span {
+            font-size: 1rem;
+            color: var(--gray);
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        
+        .pricing-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .pricing-features li i {
+            color: var(--success);
+            margin-right: 0.5rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--footer-bg);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--success);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--success);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: background 0.3s;
+        }
+        
+        .social-links a:hover {
+            background: var(--primary);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #adb5bd;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .ai-chat {
+                padding: 2rem 1.5rem;
+            }
+            
+            .pricing-card.popular {
+                transform: none;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                <span>WhaThink</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#chat">AI Chat</a></li>
+                    <li><a href="#tools">Tools</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-sun toggle-icon"></i>
+                    <div class="toggle-switch"></div>
+                    <i class="fas fa-moon toggle-icon"></i>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-outline">Login</button>
+                    <button class="btn btn-primary">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </header>
 
-  <header>
-    <h1>Whathink</h1>
-    <p>Learn Tech & Education in a Fun Way</p>
-  </header>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>Unlock the Power of AI with WhaThink</h1>
+            <p>Experience the next generation of artificial intelligence. From content creation to data analysis, our platform provides cutting-edge AI tools for individuals and businesses.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary">Get Started Free</button>
+                <button class="btn btn-outline" style="color: var(--text-color); border-color: var(--primary);">Watch Demo</button>
+            </div>
+        </div>
+    </section>
 
-  <nav>
-    <a href="#home">Home</a>
-    <a href="#features">Features</a>
-    <a href="#about">About</a>
-    <a href="#blog">Blog</a>
-    <a href="#contact">Contact</a>
-  </nav>
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Powerful AI Features</h2>
+                <p>Discover the wide range of AI capabilities that WhaThink offers to enhance your productivity and creativity.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Smart Chat Assistant</h3>
+                    <p>Engage in natural conversations with our advanced AI that understands context and provides helpful responses.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Content Generation</h3>
+                    <p>Create high-quality articles, emails, and marketing copy in seconds with our AI writing assistant.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Data Analysis</h3>
+                    <p>Upload your data and get instant insights, trends, and visualizations powered by AI algorithms.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Code Generation</h3>
+                    <p>Generate code snippets, debug existing code, or get programming help in multiple languages.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h3>Language Translation</h3>
+                    <p>Translate text between dozens of languages while preserving context and nuance.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <h3>Image Analysis</h3>
+                    <p>Upload images and get detailed descriptions, identify objects, or generate alt text automatically.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <section class="hero" id="home">
-    <h2>Welcome to Whathink</h2>
-    <p>Your hub for tech tutorials & educational content</p>
-    <button>Get Started</button>
-  </section>
+    <!-- AI Chat Section -->
+    <section class="section" id="chat">
+        <div class="container">
+            <div class="ai-chat">
+                <h2>Chat with WhaThink AI</h2>
+                <p>Ask questions, get creative ideas, or solve problems with our intelligent AI assistant.</p>
+                
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message ai-message">
+                            <p>Hello! I'm WhaThink AI. How can I assist you today? You can ask me questions, request content, analyze data, or just have a conversation.</p>
+                        </div>
+                        <div class="message user-message">
+                            <p>Can you help me write a professional email to a client?</p>
+                        </div>
+                        <div class="message ai-message">
+                            <p>Of course! I'd be happy to help you draft a professional email. Could you provide some details about the purpose of the email and the tone you'd like to use?</p>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="userInput" placeholder="Type your message here...">
+                        <button id="sendButton"><i class="fas fa-paper-plane"></i> Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <section class="features" id="features">
-    <div class="card">
-      <h3>Interactive Learning</h3>
-      <p>Step by step tutorials to make learning fun and easy.</p>
-    </div>
-    <div class="card">
-      <h3>Latest Tech</h3>
-      <p>Stay updated with trending technology & tools.</p>
-    </div>
-    <div class="card">
-      <h3>Community Support</h3>
-      <p>Learn together with a friendly community of learners.</p>
-    </div>
-  </section>
+    <!-- AI Tools Section -->
+    <section class="section" id="tools">
+        <div class="container">
+            <div class="section-title">
+                <h2>AI-Powered Tools</h2>
+                <p>Specialized tools designed to tackle specific tasks with artificial intelligence.</p>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-pencil-alt"></i>
+                    </div>
+                    <h3>Content Writer</h3>
+                    <p>Generate blog posts, articles, and marketing copy.</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3>Math Solver</h3>
+                    <p>Solve complex mathematical problems step by step.</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Research Assistant</h3>
+                    <p>Gather and summarize information on any topic.</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Idea Generator</h3>
+                    <p>Overcome creative blocks with innovative ideas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <section class="about" id="about">
-    <h2>About Whathink</h2>
-    <p>Whathink is a platform dedicated to tech enthusiasts and learners. Our goal is to provide easy-to-understand tutorials, insights, and resources for anyone looking to grow in technology and education.</p>
-  </section>
+    <!-- Pricing Section -->
+    <section class="section" id="pricing">
+        <div class="container">
+            <div class="section-title">
+                <h2>Simple, Transparent Pricing</h2>
+                <p>Choose the plan that works best for you. All plans include access to our core AI features.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Free</h3>
+                    <div class="price">$0 <span>/month</span></div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 50 AI requests per month</li>
+                        <li><i class="fas fa-check"></i> Basic chat functionality</li>
+                        <li><i class="fas fa-check"></i> Standard response speed</li>
+                        <li><i class="fas fa-times"></i> No priority support</li>
+                        <li><i class="fas fa-times"></i> Limited tool access</li>
+                    </ul>
+                    <button class="btn btn-outline" style="color: var(--text-color); border-color: var(--gray);">Get Started</button>
+                </div>
+                <div class="pricing-card popular">
+                    <div class="popular-badge">MOST POPULAR</div>
+                    <h3>Pro</h3>
+                    <div class="price">$29 <span>/month</span></div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 2,000 AI requests per month</li>
+                        <li><i class="fas fa-check"></i> Advanced chat with file upload</li>
+                        <li><i class="fas fa-check"></i> Faster response times</li>
+                        <li><i class="fas fa-check"></i> Priority email support</li>
+                        <li><i class="fas fa-check"></i> Full tool access</li>
+                    </ul>
+                    <button class="btn btn-primary">Try Free for 14 Days</button>
+                </div>
+                <div class="pricing-card">
+                    <h3>Enterprise</h3>
+                    <div class="price">Custom</div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Unlimited AI requests</li>
+                        <li><i class="fas fa-check"></i> Custom AI model training</li>
+                        <li><i class="fas fa-check"></i> API access</li>
+                        <li><i class="fas fa-check"></i> Dedicated account manager</li>
+                        <li><i class="fas fa-check"></i> SLA guarantee</li>
+                    </ul>
+                    <button class="btn btn-outline" style="color: var(--text-color); border-color: var(--gray);">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <section class="blog" id="blog">
-    <h2>Latest Posts</h2>
-    <div class="post">
-      <h4>HTML Basics</h4>
-      <p>Learn the foundations of HTML to start your web development journey.</p>
-    </div>
-    <div class="post">
-      <h4>CSS Tips</h4>
-      <p>Enhance your web pages with simple but powerful CSS tricks.</p>
-    </div>
-    <div class="post">
-      <h4>JavaScript Intro</h4>
-      <p>Understand the basics of JavaScript for dynamic web applications.</p>
-    </div>
-  </section>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>WhaThink</h3>
+                    <p>Empowering individuals and businesses with cutting-edge AI technology.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Product</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">AI Tools</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">API Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 WhaThink AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
-  <section class="contact" id="contact">
-    <h2>Contact Us</h2>
-    <form>
-      <input type="text" placeholder="Your Name" required>
-      <input type="email" placeholder="Your Email" required>
-      <textarea rows="5" placeholder="Your Message" required></textarea>
-      <button type="submit">Send Message</button>
-    </form>
-  </section>
+    <script>
+        // Dark Mode Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        
+        // Set initial theme
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
 
-  <footer>
-    &copy; 2025 Whathink. All Rights Reserved.
-  </footer>
+        // Chat functionality
+        document.getElementById('sendButton').addEventListener('click', sendMessage);
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
 
-  <!-- JavaScript -->
-  <script>
-    // Hero button click
-    const heroBtn = document.querySelector(".hero button");
-    heroBtn.addEventListener("click", () => {
-      alert("Welcome to Whathink!");
-    });
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            
+            if (message === '') return;
+            
+            // Add user message to chat
+            addMessage(message, 'user');
+            
+            // Clear input
+            userInput.value = '';
+            
+            // Simulate AI response after a short delay
+            setTimeout(() => {
+                const responses = [
+                    "I understand your question. Let me think about that...",
+                    "That's an interesting point. Here's what I think...",
+                    "Based on the information provided, I would suggest...",
+                    "I've analyzed your request and here's my response...",
+                    "Great question! Let me break this down for you..."
+                ];
+                
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                addMessage(randomResponse, 'ai');
+            }, 1000);
+        }
 
-    // Contact form validation
-    const form = document.querySelector("form");
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const name = form.querySelector('input[type="text"]').value;
-      const email = form.querySelector('input[type="email"]').value;
-      const message = form.querySelector('textarea').value;
-      if(name && email && message){
-        alert("Thank you! Your message has been sent.");
-        form.reset();
-      } else {
-        alert("Please fill all fields.");
-      }
-    });
-  </script>
+        function addMessage(text, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
+            
+            const messageText = document.createElement('p');
+            messageText.textContent = text;
+            
+            messageDiv.appendChild(messageText);
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
 
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetSection.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
-  </html>
+</html>
