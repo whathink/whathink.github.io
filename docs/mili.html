@@ -223,6 +223,18 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px;padd
   </section>
 
   <section class="panel">
+    <h2>⚡ Groq AI Brain — Fast &amp; Free (Recommended)</h2>
+    <p>Groq is the recommended brain for Mili — fast replies and a much bigger free limit. Connect your free Groq key and Mili will use Groq <b>first</b> for every reply. If Groq is ever unavailable, she falls back to Gemini (if connected) or her built-in brain automatically.</p>
+    <label for="groqApiKey">Groq API Key</label>
+    <input type="password" id="groqApiKey" placeholder="Starts with gsk_…" autocomplete="off">
+    <button class="btn btn-teal" id="groqConnectBtn" type="button" style="margin-top:12px">Connect Groq</button>
+    <button class="btn btn-ghost" id="groqDisconnectBtn" type="button" style="margin-top:8px">Use Built-in Brain instead</button>
+    <div class="msg2" id="groqKeyMsg" role="status"></div>
+    <ol class="steps"><li>Open <a href="https://console.groq.com" target="_blank" rel="noopener">console.groq.com</a></li><li>Sign in with Google or email — free, no card.</li><li>Tap <b>API Keys → Create API Key</b> — name it 'Mili'.</li><li>Copy the key (shown only once) and paste it above.</li></ol>
+    <p class="note">Free: about 1,000 replies a day — far more than Gemini's ~20/day on the free tier. Key stays only in this page's memory — never saved. Close the page and it is gone.</p>
+  </section>
+
+  <section class="panel">
     <h2>🧠 Real AI Brain — Gemini (Free)</h2>
     <p>Mili's built-in brain is now much smarter, but for truly fresh answers to <b>any</b> question, connect the free Gemini key. She will remember your chat and reply in her own words.</p>
     <label for="apiKey">Gemini API Key</label>
@@ -248,7 +260,7 @@ var chatLog=$("chatLog"),typing=$("typing"),form=$("chatForm"),input=$("userInpu
 var mouth=$("mouth"),eyeL=$("eyeL"),eyeR=$("eyeR"),lidL=$("lidL"),lidR=$("lidR"),browL=$("browL"),browR=$("browR"),blushL=$("blushL"),blushR=$("blushR"),avatar=$("avatar");
 var voiceToggle=$("voiceToggle"),voiceSel=$("voiceSel"),langSel=$("langSel"),voicePill=$("voicePill"),brainPill=$("brainPill"),brainTxt=$("brainTxt");
 var rateRange=$("rateRange"),pitchRange=$("pitchRange"),rateVal=$("rateVal"),pitchVal=$("pitchVal");
-var geminiKey="",history=[],speaking=false,busy=false,mouthTimer=null,lastTopic="";
+var geminiKey="",groqKey="",history=[],speaking=false,busy=false,mouthTimer=null,lastTopic="";
 
 function updatePill(){ voicePill.textContent = voiceToggle.checked ? "🔊 Voice ON" : "🔇 Voice OFF"; voicePill.className="pill"+(voiceToggle.checked?" voice-on":""); }
 voiceToggle.addEventListener("change",function(){updatePill(); if(!voiceToggle.checked) stopSpeaking();});
@@ -371,6 +383,30 @@ function demoBrain(q){
 }
 function guessMood(txt){var t=txt.toLowerCase(); if(/(sorry|sad|tough|breath|rest)/.test(t))return "sad"; if(/(wow|really|surprise)/.test(t))return "surprise"; if(/(idea|plan|think|question)/.test(t))return "think"; return "happy"}
 
+/* Groq — primary brain. OpenAI-compatible chat completions. Key is sent only in the Authorization header, never in a URL. */
+function groqErrorInfo(status,bodyText){
+  var msg="";
+  try{var j=JSON.parse(bodyText); if(j&&j.error){msg=(typeof j.error==="string"?j.error:(j.error.message||""))}}catch(e){}
+  if(status===401||status===403)return{code:"bad_key",label:"Groq says this API key is invalid. Copy the full key again from console.groq.com — no spaces — and try again."};
+  if(status===429)return{code:"quota",label:"Groq free quota / rate limit hit for now. Wait a minute and try again — your key itself is fine."};
+  if(status>=500)return{code:"server",label:"Groq's server had a hiccup ("+status+")"+(msg?": "+msg.slice(0,180):"")+". Wait a few seconds and try again — your key is probably fine."};
+  if(msg)return{code:"api",label:"Groq error ("+status+"): "+msg.slice(0,180)};
+  return{code:"http",label:"Groq did not respond (HTTP "+status+"). Check your internet and try again."};
+}
+function groqReply(q){
+  var sys="You are Mili, a warm, witty talking companion chatting with Shivansh, a YouTube creator (channels: Mythash - English AI fantasy stories, PaStory - history of everyday things, BoomBox - Hindi AI music). Reply in simple, clear English unless he writes in Hindi. Keep it SHORT: 2-4 short sentences max, easy to speak aloud. Be conversational and specific, never generic. Ask a follow-up question sometimes. Very few emojis (0-1). Never say you are an AI language model.";
+  var messages=[{role:"system",content:sys}];
+  history.forEach(function(h){messages.push({role:(h.role==="model"?"assistant":h.role),content:h.text})});
+  messages.push({role:"user",content:q});
+  var payload=JSON.stringify({model:"openai/gpt-oss-120b",messages:messages,max_tokens:350,temperature:0.85});
+  return fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+groqKey},body:payload})
+  .then(function(r){
+    if(r.ok)return r.json();
+    return r.text().then(function(t){var info=groqErrorInfo(r.status,t); var err=new Error(info.label); err.code=info.code; err.status=r.status; throw err});
+  })
+  .then(function(d){var txt=""; try{txt=(d.choices[0].message.content||"").trim()}catch(e){} if(!txt){var err=new Error("Groq replied empty this time. Try again."); err.code="empty"; throw err} return txt});
+}
+
 /* Gemini — FIXED: old models gemini-2.0-flash / gemini-1.5-flash are retired (404 for new keys).
    Use current models with fallback chain + real error details so a valid key is never blamed. */
 var GEMINI_MODELS=["gemini-3.8-flash","gemini-3.7-flash","gemini-2.5-flash","gemini-2.5-flash-lite","gemini-flash-latest"];
@@ -411,7 +447,28 @@ function addMsg(cls,text){var d=document.createElement("div"); d.className="msg 
 function charReply(text){typing.style.display="none"; addMsg("char",text); speechText.textContent=text; setMood(guessMood(text)); speak(text)}
 function send(text){ var q=(text||"").trim(); if(!q||busy)return; busy=true; addMsg("user",q); input.value=""; setMood("think"); typing.style.display="block"; chatLog.scrollTop=chatLog.scrollHeight;
   var finish=function(r){history.push({role:"user",text:q}); history.push({role:"model",text:r}); if(history.length>14)history=history.slice(-14); charReply(r); busy=false};
-  if(geminiKey){ geminiReply(q).then(finish).catch(function(err){addMsg("sys","Gemini didn't respond — "+((err&&err.message)||"check connection")+" Answering with my built-in brain instead."); finish(demoBrain(q))}) } else { setTimeout(function(){finish(demoBrain(q))},600) }
+  function viaGemini(reasonNote){
+    if(reasonNote)addMsg("sys",reasonNote);
+    geminiReply(q).then(finish).catch(function(gerr){addMsg("sys","Gemini didn't respond — "+((gerr&&gerr.message)||"check connection")+" Answering with my built-in brain instead."); finish(demoBrain(q))});
+  }
+  function viaDemo(note){ if(note)addMsg("sys",note); setTimeout(function(){finish(demoBrain(q))},350) }
+  if(groqKey){
+    groqReply(q).then(finish).catch(function(err){
+      var code=err&&err.code, reason=(err&&err.message)||"check connection";
+      if(code==="quota"){
+        if(geminiKey){ viaGemini("Groq's daily limit is hit — switching to Gemini as backup.") }
+        else { viaDemo("Groq's daily limit is hit — "+reason+" Answering with my built-in brain for now.") }
+      } else if(code==="bad_key"){
+        groqKey=""; updateBrainState();
+        var gm=$("groqKeyMsg"); if(gm){gm.className="msg2 err"; gm.textContent="❌ "+reason}
+        if(geminiKey){ viaGemini("Groq key problem — "+reason+" Groq disconnected. Answering with Gemini instead.") }
+        else { viaDemo("Groq key problem — "+reason+" Groq disconnected. Answering with my built-in brain instead.") }
+      } else {
+        if(geminiKey){ viaGemini("Groq didn't respond — "+reason+" Switching to Gemini as backup.") }
+        else { viaDemo("Groq didn't respond — "+reason+" Answering with my built-in brain instead.") }
+      }
+    });
+  } else if(geminiKey){ geminiReply(q).then(finish).catch(function(err){addMsg("sys","Gemini didn't respond — "+((err&&err.message)||"check connection")+" Answering with my built-in brain instead."); finish(demoBrain(q))}) } else { setTimeout(function(){finish(demoBrain(q))},600) }
 }
 form.addEventListener("submit",function(e){e.preventDefault(); send(input.value)});
 document.querySelectorAll(".chips button").forEach(function(b){b.addEventListener("click",function(){send(b.getAttribute("data-q"))})});
@@ -457,9 +514,46 @@ function stopLive(){ liveMode=false; if(livePoll)clearInterval(livePoll); if(liv
 liveBtn.addEventListener("click",function(){ liveMode?stopLive():startLive() });
 document.addEventListener("visibilitychange",function(){if(document.hidden&&liveMode)stopLive()}); window.addEventListener("pagehide",function(){if(liveMode)stopLive()});
 
-/* Gemini connect */
+/* Brain state — Groq primary, Gemini backup, demo fallback */
 var keyMsg=$("keyMsg");
-function setBrain(on){ brainPill.className="pill"+(on?"":" demo"); brainPill.style.background=on?"var(--teal-bg)":""; brainPill.style.color=on?"var(--teal)":""; brainTxt.textContent=on?"Gemini Brain Connected":"Smarter Demo Brain" }
+var groqKeyMsg=$("groqKeyMsg");
+function updateBrainState(){
+  if(groqKey){ brainPill.className="pill"; brainPill.style.background="var(--teal-bg)"; brainPill.style.color="var(--teal)"; brainTxt.textContent="Groq Brain Connected — primary"; }
+  else if(geminiKey){ brainPill.className="pill"; brainPill.style.background="var(--teal-bg)"; brainPill.style.color="var(--teal)"; brainTxt.textContent="Gemini Brain Connected"; }
+  else { brainPill.className="pill demo"; brainPill.style.background=""; brainPill.style.color=""; brainTxt.textContent="Smarter Demo Brain"; }
+}
+function setBrain(on){ updateBrainState() }
+
+/* Groq connect */
+$("groqConnectBtn").addEventListener("click",function(){
+  var raw=$("groqApiKey").value||"";
+  var k=raw.replace(/\s+/g,"").replace(/^["']+|["']+$/g,"");
+  if(!k){groqKeyMsg.className="msg2 err"; groqKeyMsg.textContent="Paste your key first!"; return}
+  if(k.indexOf("gsk_")!==0){groqKeyMsg.className="msg2 err"; groqKeyMsg.textContent="⚠️ That doesn't look like a Groq key — it should start with gsk_ and be one long line. Copy the full key from console.groq.com (API Keys) and paste the whole thing."; return}
+  if(k!==raw.trim())$("groqApiKey").value=k;
+  var btn=$("groqConnectBtn"); btn.disabled=true; btn.textContent="Testing your key…";
+  groqKeyMsg.className="msg2"; groqKeyMsg.textContent="Testing your key with Groq…";
+  groqKey=k;
+  groqReply("Say one short friendly hello line.").then(function(){
+    btn.disabled=false; btn.textContent="Connect Groq";
+    updateBrainState(); groqKeyMsg.className="msg2 ok"; groqKeyMsg.textContent="✅ Connected! Groq is now Mili's primary brain (openai/gpt-oss-120b) — about 1,000 replies a day on the free tier. Now ask Mili anything at all.";
+    charReply("My Groq brain is connected now — and it's my primary brain! It's fast, and I have about 1,000 replies a day. Ask me anything!");
+  }).catch(function(err){
+    btn.disabled=false; btn.textContent="Connect Groq";
+    var code=err&&err.code, label=(err&&err.message)||"";
+    if(code==="bad_key"){ groqKey=""; updateBrainState(); groqKeyMsg.className="msg2 err"; groqKeyMsg.textContent="❌ "+label; }
+    else if(code==="quota"){ updateBrainState(); groqKeyMsg.className="msg2 err"; groqKeyMsg.textContent="⏳ "+label+" Your key was accepted by Groq — this is only a limit, not a bad key."; }
+    else { groqKey=""; updateBrainState(); groqKeyMsg.className="msg2 err"; groqKeyMsg.textContent="⚠️ Couldn't connect right now — this is NOT necessarily your key. "+(label||"Check your internet and tap Connect again."); }
+  });
+});
+$("groqDisconnectBtn").addEventListener("click",function(){
+  groqKey=""; updateBrainState();
+  groqKeyMsg.className="msg2 ok";
+  groqKeyMsg.textContent=geminiKey?"Groq disconnected. Gemini is now Mili's brain.":"Groq disconnected — back to the built-in brain.";
+  var gk=$("groqApiKey"); if(gk)gk.value="";
+});
+
+/* Gemini connect */
 $("connectBtn").addEventListener("click",function(){
   var raw=$("apiKey").value||"";
   var k=raw.replace(/\s+/g,"").replace(/^["']+|["']+$/g,"");
@@ -471,17 +565,18 @@ $("connectBtn").addEventListener("click",function(){
   geminiKey=k;
   geminiReply("Say one short friendly hello line.").then(function(){
     btn.disabled=false; btn.textContent="Connect Gemini";
-    setBrain(true); keyMsg.className="msg2 ok"; keyMsg.textContent="✅ Connected! Gemini is working ("+(geminiModelUsed||"flash")+"). Now ask Mili anything at all.";
-    charReply("My real brain is connected now! Ask me anything — I'll think up the answer myself, and remember our chat.");
+    updateBrainState(); keyMsg.className="msg2 ok";
+    if(groqKey){ keyMsg.textContent="✅ Connected! Gemini is working ("+(geminiModelUsed||"flash")+") and is now ready as backup — Groq stays primary."; charReply("Gemini is connected as my backup brain — Groq is still my primary. If Groq ever hits its limit, I'll switch to Gemini automatically!"); }
+    else { keyMsg.textContent="✅ Connected! Gemini is working ("+(geminiModelUsed||"flash")+"). Now ask Mili anything at all."; charReply("My real brain is connected now! Ask me anything — I'll think up the answer myself, and remember our chat."); }
   }).catch(function(err){
     btn.disabled=false; btn.textContent="Connect Gemini";
     var code=err&&err.code, label=(err&&err.message)||"";
-    if(code==="bad_key"){ geminiKey=""; keyMsg.className="msg2 err"; keyMsg.textContent="❌ "+label; }
+    if(code==="bad_key"){ geminiKey=""; updateBrainState(); keyMsg.className="msg2 err"; keyMsg.textContent="❌ "+label; }
     else if(code==="quota"){ keyMsg.className="msg2 err"; keyMsg.textContent="⏳ "+label+" Your key was accepted by Google — this is only a limit, not a bad key."; }
     else { keyMsg.className="msg2 err"; keyMsg.textContent="⚠️ Couldn't connect right now — this is NOT necessarily your key. "+(label||"Check your internet and tap Connect again."); }
   });
 });
-$("disconnectBtn").addEventListener("click",function(){geminiKey=""; history=[]; $("apiKey").value=""; setBrain(false); keyMsg.className="msg2 ok"; keyMsg.textContent="Back to the built-in brain."});
+$("disconnectBtn").addEventListener("click",function(){geminiKey=""; history=[]; $("apiKey").value=""; updateBrainState(); keyMsg.className="msg2 ok"; keyMsg.textContent=groqKey?"Gemini disconnected. Groq is still Mili's primary brain.":"Back to the built-in brain."});
 
 /* Tap Mili */
 var wrap=$("avatarWrap"); var lines=["Hee hee! Hi hi! ✨","That tickles! 💖","Waving back at you! 👋","So happy you're here! 💗","Sparkles, just for you! ✨"]; var pops=["💖","✨","💗","⭐","🌸"];
