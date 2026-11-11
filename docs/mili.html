@@ -11,190 +11,321 @@
 :root{
   --bg:#FFF8F1; --bg2:#FFF1E6; --card:#FFFFFF; --ink:#2D2220; --muted:#7A6E67;
   --line:#F0DDD0; --coral:#FF5A5F; --coral-d:#E8464C; --peach:#FFB59E; --pink:#FFD6E0;
-  --teal:#0F766E; --teal-bg:#E6F4F1; --gold:#E9A426; --bubble:#FFF4EC; --shadow:0 12px 32px rgba(120,60,20,.10);
-  --r:20px;
+  --teal:#0F766E; --teal-bg:#E6F4F1; --gold:#E9A426; --bubble:#FFF4EC; --side:#FFF3E9;
+  --shadow:0 12px 32px rgba(120,60,20,.10); --hover:rgba(120,60,20,.06);
 }
 @media(prefers-color-scheme:dark){
-  :root{--bg:#1A1512;--bg2:#241C17;--card:#2A211C;--ink:#FFF3E8;--muted:#C4B2A6;--line:#3E332B;--bubble:#33271F;--teal-bg:#17332E;--shadow:0 12px 32px rgba(0,0,0,.5)}
+  :root{--bg:#1A1512;--bg2:#241C17;--card:#2A211C;--ink:#FFF3E8;--muted:#C4B2A6;--line:#3E332B;--bubble:#33271F;--teal-bg:#17332E;--side:#211A15;--shadow:0 12px 32px rgba(0,0,0,.5);--hover:rgba(255,240,225,.07)}
 }
-*{box-sizing:border-box} html,body{margin:0} body{font-family:"Nunito",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
-button,input,select{font:inherit;min-height:44px} button{cursor:pointer}
-.wrap{max-width:880px;margin:0 auto;padding:14px 14px 36px}
+html[data-theme="light"]{--bg:#FFF8F1;--bg2:#FFF1E6;--card:#FFFFFF;--ink:#2D2220;--muted:#7A6E67;--line:#F0DDD0;--bubble:#FFF4EC;--teal-bg:#E6F4F1;--side:#FFF3E9;--shadow:0 12px 32px rgba(120,60,20,.10);--hover:rgba(120,60,20,.06)}
+html[data-theme="dark"]{--bg:#1A1512;--bg2:#241C17;--card:#2A211C;--ink:#FFF3E8;--muted:#C4B2A6;--line:#3E332B;--bubble:#33271F;--teal-bg:#17332E;--side:#211A15;--shadow:0 12px 32px rgba(0,0,0,.5);--hover:rgba(255,240,225,.07)}
+*{box-sizing:border-box} html,body{margin:0;height:100%}
+body{font-family:"Nunito",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+button,input,select,textarea{font:inherit} button{cursor:pointer}
+svg.ic{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* STAGE */
-.stage{background:linear-gradient(180deg,var(--bg2),var(--card));border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:18px 16px 16px;overflow:hidden;position:relative}
-.topbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start}
-.brand h1{font-family:"Quicksand",sans-serif;font-size:28px;line-height:1;margin:2px 0 4px;letter-spacing:-.02em}
-.brand h1 span{color:var(--coral)} .brand p{margin:0;color:var(--muted);font-size:.92rem;font-weight:700;max-width:420px}
-.pills{display:flex;gap:7px;flex-wrap:wrap}
-.pill{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:800;padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+/* APP SHELL */
+.app{display:grid;grid-template-columns:272px minmax(0,1fr);height:100dvh}
+main{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--bg)}
+
+/* SIDEBAR */
+.sidebar{background:var(--side);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;z-index:40}
+.side-top{padding:12px;display:flex;flex-direction:column;gap:8px}
+.newchat{display:flex;align-items:center;gap:9px;width:100%;padding:11px 13px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-weight:900;font-size:.95rem;min-height:46px}
+.newchat:active{border-color:var(--coral)}
+.side-btn{display:flex;align-items:center;gap:9px;width:100%;padding:10px 13px;border-radius:12px;border:none;background:transparent;color:var(--ink);font-weight:800;font-size:.92rem;min-height:44px;text-align:left}
+.side-btn:hover{background:var(--hover)}
+.side-label{font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 14px 4px}
+.chat-list{flex:1;overflow-y:auto;padding:2px 8px 10px;display:flex;flex-direction:column;gap:2px}
+.chat-item{display:flex;align-items:center;gap:4px;border-radius:10px;padding:4px 4px 4px 10px;min-height:42px}
+.chat-item:hover{background:var(--hover)} .chat-item.active{background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line)}
+.chat-item .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:800;font-size:.9rem;background:none;border:none;color:var(--ink);text-align:left;padding:8px 0;cursor:pointer}
+.chat-item .del{width:34px;height:34px;min-height:34px;border:none;background:transparent;color:var(--muted);border-radius:8px;display:grid;place-items:center;flex:none}
+.chat-item .del:hover{color:var(--coral);background:var(--hover)}
+.chat-empty{padding:8px 14px;color:var(--muted);font-size:.86rem;font-weight:700}
+.side-foot{border-top:1px solid var(--line);padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.scrim{display:none}
+@media(max-width:840px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .sidebar{display:none;position:fixed;top:0;left:0;bottom:0;width:min(300px,84vw);box-shadow:var(--shadow)}
+  .sidebar.open{display:flex;animation:slideIn .22s ease}
+  @keyframes slideIn{from{transform:translateX(-14px);opacity:.3}to{transform:none;opacity:1}}
+  .scrim{display:block;position:fixed;inset:0;background:rgba(20,10,5,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:30}
+  .scrim.on{opacity:1;pointer-events:auto}
+}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--bg);flex:none}
+.icon-btn{width:42px;height:42px;min-height:42px;border:none;background:transparent;color:var(--ink);border-radius:10px;display:grid;place-items:center;flex:none}
+.icon-btn:hover{background:var(--hover)}
+.model-wrap{display:flex;align-items:center;gap:6px;min-width:0}
+.model-wrap select{max-width:190px;padding:9px 8px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-weight:800;font-size:.88rem;min-height:42px}
+.topbar .sp{flex:1}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:800;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card);white-space:nowrap}
 .pill.voice-on{background:#FFE8E9;color:#B4232A;border-color:#FFC9CC} .pill.demo{background:#FFF3D6;color:#8A5A00}
+html[data-theme="dark"] .pill.demo{background:#4A3A12;color:#FFD97A}
 .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+@media(max-width:640px){
+  .topbar{gap:4px;padding:8px}  .topbar .icon-btn{width:38px;height:38px;min-height:38px}
+  .model-wrap{flex:1;min-width:0}
+  .model-wrap label{display:none}
+  .model-wrap select{width:100%;max-width:none;min-width:0}
+  .pill .pill-txt{display:none}
+  #brainPill #brainTxt{display:none}
+  #brainPill{padding:8px 9px}
+  #voicePill{padding:7px 9px}
+  .stage-inner{padding:10px 12px;gap:10px;grid-template-columns:88px minmax(0,1fr)}
+  .avatar{width:88px}
+  .speech{padding:9px 12px}.speech p{font-size:.93rem}
+  .live{padding:10px;margin-top:8px}
+  .live-status{font-size:.84rem}
+  .mode-row label{min-width:0;padding:8px 9px;font-size:.8rem}
+  .welcome{padding-top:18px}.welcome h2{font-size:1.3rem}
+}
 
-.hero{display:grid;grid-template-columns:1fr;gap:6px;justify-items:center;text-align:center;margin-top:8px}
-@media(min-width:680px){.hero{grid-template-columns:300px 1fr;text-align:left;justify-items:stretch;align-items:center} .speech-col{align-self:center}}
+/* STAGE (Mili + Live Talk) */
+.stage{border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--bg2),var(--card));flex:none}
+.stage-inner{max-width:860px;margin:0 auto;padding:12px 14px;display:grid;grid-template-columns:104px minmax(0,1fr);gap:12px;align-items:start}
+.stage.closed .stage-inner{display:none}
 .avatar-wrap{position:relative;display:flex;justify-content:center}
-.avatar{width:min(272px,68vw);cursor:pointer;-webkit-tap-highlight-color:transparent;animation:bob 4s ease-in-out infinite;transform-origin:50% 90%}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.avatar{width:104px;cursor:pointer;-webkit-tap-highlight-color:transparent;animation:bob 4s ease-in-out infinite;transform-origin:50% 90%}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 .avatar.talking{animation:bobTalk .7s ease-in-out infinite}@keyframes bobTalk{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.01)}}
-.float{position:absolute;pointer-events:none;animation:floaty 3.6s ease-in-out infinite;font-size:18px}@keyframes floaty{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-9px) rotate(7deg)}}
-.pop{position:absolute;bottom:38%;pointer-events:none;animation:popUp 1s ease-out forwards;font-size:20px}@keyframes popUp{0%{opacity:0;transform:translateY(8px) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translateY(-78px) scale(1.2)}}
+.pop{position:absolute;bottom:38%;pointer-events:none;animation:popUp 1s ease-out forwards;font-size:18px}@keyframes popUp{0%{opacity:0;transform:translateY(8px) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translateY(-70px) scale(1.2)}}
 #waveArm{transform-box:fill-box;transform-origin:15% 90%} .avatar.waving #waveArm{animation:wave .34s ease-in-out 4}@keyframes wave{0%,100%{transform:rotate(0)}50%{transform:rotate(-26deg)}}
 .headTilt{transform-origin:140px 160px;animation:tilt 6s ease-in-out infinite}@keyframes tilt{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
-@media(prefers-reduced-motion:reduce){.avatar,.float,.headTilt,.avatar.waving #waveArm{animation:none}}
+@media(prefers-reduced-motion:reduce){.avatar,.headTilt,.avatar.waving #waveArm{animation:none}}
+.speech{background:var(--bubble);border:1px solid var(--line);border-radius:16px;padding:11px 14px}
+.speech b{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:3px}
+.speech p{margin:0;font-size:.98rem;line-height:1.5;font-weight:700}
+.stage-toggle{margin-top:8px}
 
-.speech{background:var(--bubble);border:1px solid var(--line);border-radius:18px;padding:14px 16px;position:relative}
-.speech b{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:4px}
-.speech p{margin:0;font-size:1.05rem;line-height:1.5;font-weight:700}
-.quick-feats{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;justify-content:center}@media(min-width:680px){.quick-feats{justify-content:flex-start}}
-.quick-feats span{font-size:.78rem;font-weight:800;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 10px}
-
-/* LIVE - SIMPLIFIED */
-.live{margin-top:16px;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:14px}
+/* LIVE */
+.live{margin-top:10px;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:12px}
 .live.on{border-color:var(--coral);box-shadow:0 0 0 4px rgba(255,90,95,.14)}
 .live-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.live-head strong{font-size:1rem;display:flex;gap:8px;align-items:center}
-.orb{width:36px;height:36px;border-radius:50%;background:var(--teal-bg);display:grid;place-items:center;font-size:18px;flex:none}
+.live-head strong{font-size:.98rem;display:flex;gap:8px;align-items:center}
+.orb{width:34px;height:34px;border-radius:50%;background:var(--teal-bg);display:grid;place-items:center;font-size:16px;flex:none}
 .live.on .orb{background:#FFE1E2;animation:pulseOrb 1.3s infinite}@keyframes pulseOrb{0%,100%{box-shadow:0 0 0 0 rgba(255,90,95,.35)}50%{box-shadow:0 0 0 9px rgba(255,90,95,0)}}
-.live-status{font-size:.9rem;color:var(--muted);margin-top:8px;min-height:24px}.live-status b{color:var(--ink)}
-.btn{border:none;border-radius:12px;font-weight:900;padding:11px 16px;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.live-status{font-size:.88rem;color:var(--muted);margin-top:7px;min-height:22px}.live-status b{color:var(--ink)}
+.btn{border:none;border-radius:12px;font-weight:900;padding:11px 16px;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px}
 .btn-primary{background:var(--coral);color:#fff}.btn-primary:active{background:var(--coral-d)} .btn-dark{background:var(--ink);color:var(--bg)} .btn-teal{background:var(--teal);color:#fff;width:100%} .btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink);width:100%}
 .live-body{display:none;margin-top:12px;gap:14px}@media(min-width:560px){.live-body{grid-template-columns:168px 1fr}} .live.on .live-body{display:grid}
 .cam{position:relative}.cam video{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;background:#111;transform:scaleX(-1);border:2px solid var(--line);display:block}
 .cam-tag{position:absolute;left:7px;bottom:7px;background:rgba(0,0,0,.7);color:#fff;font-size:.68rem;font-weight:900;padding:4px 8px;border-radius:999px;letter-spacing:.04em}
 .meter{display:flex;gap:3px;align-items:flex-end;height:26px;margin:10px 0}.meter i{flex:1;height:5px;border-radius:99px;background:var(--teal);transition:height .1s;opacity:.35}
 .heard-box{background:var(--bg);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;font-size:.92rem;min-height:52px}.heard-box b{color:var(--teal)}
-.mode-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.mode-row label{flex:1;min-width:140px;display:flex;gap:8px;align-items:center;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font-weight:800;font-size:.88rem;cursor:pointer}.mode-row input{width:20px;height:20px;accent-color:var(--coral)}
+.mode-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.mode-row label{flex:1;min-width:150px;display:flex;gap:8px;align-items:center;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font-weight:800;font-size:.88rem;cursor:pointer}.mode-row input{width:20px;height:20px;accent-color:var(--coral)}
 
-/* CHAT */
-.chat{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
-.chat-head{padding:13px 14px 0;display:flex;justify-content:space-between;align-items:center}.chat-head strong{font-size:1rem}.chat-head span{font-size:.8rem;color:var(--muted);font-weight:700}
-.log{max-height:360px;overflow:auto;padding:12px 14px;display:flex;flex-direction:column;gap:9px}
-.msg{max-width:84%;padding:10px 13px;border-radius:16px;font-size:.97rem;white-space:pre-wrap;word-wrap:break-word;line-height:1.5}
+/* CHAT SCROLL */
+.scroll{flex:1;overflow-y:auto;min-height:0}
+.log{max-width:860px;margin:0 auto;padding:16px 14px 8px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:85%;padding:10px 13px;border-radius:16px;font-size:.97rem;white-space:pre-wrap;word-wrap:break-word;line-height:1.55;position:relative}
+@media(min-width:700px){.msg{max-width:75%}}
 .msg.user{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:5px}
-.msg.char{align-self:flex-start;background:var(--bubble);border:1px solid var(--line);border-bottom-left-radius:5px}
+.msg.char{align-self:flex-start;background:var(--bubble);border:1px solid var(--line);border-bottom-left-radius:5px;padding-bottom:6px}
 .msg.sys{align-self:center;text-align:center;background:transparent;color:var(--muted);font-size:.84rem;max-width:96%}
+.msg img.att{display:block;max-width:220px;width:100%;border-radius:10px;margin-bottom:8px}
+.msg .acts{display:flex;gap:2px;margin-top:6px}
+.msg .acts button{width:32px;height:32px;min-height:32px;border:none;background:transparent;color:var(--muted);border-radius:8px;display:grid;place-items:center;padding:0}
+.msg .acts button:hover{background:var(--hover);color:var(--ink)}
+.msg .acts svg{width:16px;height:16px}
+.msg.user .acts{justify-content:flex-end}.msg.user .acts button{color:rgba(255,255,255,.85)}.msg.user .acts button:hover{background:rgba(255,255,255,.18);color:#fff}
 .typing{display:none;align-self:flex-start;padding:11px 14px;background:var(--bubble);border:1px solid var(--line);border-radius:16px}.typing i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--coral);margin-right:4px;animation:td 1s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s;margin:0}@keyframes td{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
-.composer{border-top:1px solid var(--line);padding:12px}
-.row{display:flex;gap:8px}.row input[type=text]{flex:1;min-width:0;padding:11px 13px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
-.btn-send{background:var(--coral);color:#fff}.btn-mic{width:50px;padding:0;background:var(--bg);border:1.5px solid var(--line);font-size:18px}.btn-mic.listening{background:var(--coral);color:#fff;border-color:var(--coral)}
-.hint{font-size:.8rem;color:var(--muted);margin:9px 2px 0}
-.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.chips button{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:8px 13px;font-size:.86rem;font-weight:800;min-height:40px}
+.welcome{max-width:860px;margin:0 auto;padding:26px 16px 4px;text-align:center}
+.welcome h2{font-family:"Quicksand",sans-serif;font-size:1.55rem;margin:0 0 6px}
+.welcome h2 span{color:var(--coral)}
+.welcome p{margin:0;color:var(--muted);font-weight:700;font-size:.95rem}
 
-/* SETTINGS GRID */
-.grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}@media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}
+/* COMPOSER */
+.composer-wrap{flex:none;padding:8px 12px calc(10px + env(safe-area-inset-bottom));background:var(--bg)}
+.composer-inner{max-width:860px;margin:0 auto}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin:0 2px 9px}
+.chips button{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 13px;font-size:.86rem;font-weight:800;min-height:40px}
+.chips button:active{border-color:var(--coral)}
+.att-chip{display:none;align-items:center;gap:9px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:7px 9px;margin:0 2px 9px;width:max-content;max-width:100%}
+.att-chip.on{display:flex}.att-chip img{width:42px;height:42px;object-fit:cover;border-radius:8px}
+.att-chip span{font-size:.85rem;font-weight:800}
+.att-chip button{width:32px;height:32px;min-height:32px;border:none;background:var(--hover);border-radius:8px;color:var(--ink);display:grid;place-items:center}
+.composer{display:flex;gap:8px;align-items:flex-end;background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:8px;box-shadow:var(--shadow)}
+.composer textarea{flex:1;min-width:0;border:none;background:transparent;color:var(--ink);resize:none;max-height:120px;padding:10px 6px;line-height:1.45;outline:none}
+.cbtn{width:44px;height:44px;min-height:44px;border:none;border-radius:12px;display:grid;place-items:center;flex:none;background:transparent;color:var(--ink)}
+.cbtn:hover{background:var(--hover)}
+.cbtn.send{background:var(--coral);color:#fff}.cbtn.send:active{background:var(--coral-d)}
+.cbtn.mic.listening{background:var(--coral);color:#fff}
+.cbtn.live-on{background:var(--coral);color:#fff}
+.hint{font-size:.78rem;color:var(--muted);margin:8px 4px 0;text-align:center}
+
+/* SETTINGS SHEET */
+.sheet-scrim{position:fixed;inset:0;background:rgba(20,10,5,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:50}
+.sheet-scrim.on{opacity:1;pointer-events:auto}
+.sheet{display:none;position:fixed;top:0;right:0;bottom:0;width:min(430px,94vw);background:var(--bg);z-index:60;overflow-y:auto;padding:16px 16px 30px;box-shadow:var(--shadow)}
+.sheet.open{display:block;animation:sheetIn .22s ease}
+@keyframes sheetIn{from{transform:translateX(24px);opacity:.3}to{transform:none;opacity:1}}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.sheet-head strong{font-size:1.1rem;font-family:"Quicksand",sans-serif}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:14px}
 .panel h2{margin:0 0 6px;font-size:1.02rem}.panel p{margin:0 0 8px;color:var(--muted);font-size:.9rem}
 .panel label{display:block;font-weight:900;font-size:.86rem;margin:13px 0 5px}
-.panel input[type=password],.panel select{width:100%;padding:11px 12px;border-radius:11px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+.panel input[type=password],.panel select{width:100%;padding:11px 12px;border-radius:11px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px}
 input[type=range]{width:100%;accent-color:var(--coral)}
 .switch{display:flex;gap:10px;align-items:flex-start;font-weight:800;font-size:.92rem;margin-top:12px;cursor:pointer}.switch input{width:22px;height:22px;flex:none;accent-color:var(--teal);margin-top:1px}
 .steps{padding-left:19px;margin:6px 0;color:var(--muted);font-size:.9rem}.steps li{margin-bottom:5px}.steps a,.panel a{color:var(--teal);font-weight:900}
 .note{font-size:.8rem;color:var(--muted);margin-top:9px}.msg2{font-weight:900;font-size:.88rem;min-height:20px;margin-top:9px}.msg2.ok{color:var(--teal)}.msg2.err{color:var(--coral)}
-footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px;padding:0 8px}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--bg);font-weight:800;font-size:.88rem;padding:10px 16px;border-radius:999px;opacity:0;pointer-events:none;transition:all .25s;z-index:80;max-width:88vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%)}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="app">
 
-<section class="stage">
-  <div class="topbar">
-    <div class="brand"><h1>Meet <span>Mili</span> ✨</h1><p>Your friendly talking companion. Type, tap, or talk live — she listens, thinks, and replies.</p></div>
-    <div class="pills">
-      <div class="pill" id="voicePill">🔇 Voice OFF</div>
-      <div class="pill demo" id="brainPill"><span class="dot"></span><span id="brainTxt">Smarter Demo Brain</span></div>
+  <!-- SIDEBAR -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="sidebar" id="sidebar" aria-label="Chats">
+    <div class="side-top">
+      <button class="newchat" id="newChatBtn" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> New chat</button>
     </div>
-  </div>
+    <div class="side-label">Your chats</div>
+    <div class="chat-list" id="chatList"></div>
+    <div class="side-foot">
+      <button class="side-btn" id="exportBtn" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg> Export this chat</button>
+      <button class="side-btn" id="settingsBtn2" type="button"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</button>
+      <button class="side-btn" id="themeBtn2" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> <span id="themeTxt2">Dark theme</span></button>
+    </div>
+  </aside>
 
-  <div class="hero">
-    <div class="avatar-wrap" id="avatarWrap">
-      <span class="float" style="top:6%;left:6%">💗</span><span class="float" style="top:2%;right:8%;animation-delay:.6s">✨</span><span class="float" style="top:42%;right:0;animation-delay:1.1s">🌸</span>
-      <div class="avatar" id="avatar" role="button" tabindex="0" aria-label="Tap Mili" title="Tap Mili">
-      <!-- NEW LOOK: softer chibi, cleaner lines, warmer palette, less clutter -->
-      <svg viewBox="0 0 280 320" width="100%" role="img" aria-label="Mili, cute character with long hair and cat-ear hood">
-        <defs>
-          <linearGradient id="hairG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8B5A34"/><stop offset="100%" stop-color="#5C3A22"/></linearGradient>
-          <linearGradient id="sweaterG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFB8C6"/><stop offset="100%" stop-color="#FF8FAB"/></linearGradient>
-        </defs>
-        <!-- body -->
-        <path d="M78 320 C80 268 102 242 140 242 C178 242 200 268 202 320 Z" fill="url(#sweaterG)"/>
-        <path d="M116 246 L140 264 L164 246 L154 240 L140 252 L126 240 Z" fill="#FFF6F8"/>
-        <path d="M140 282 C133 271 116 276 118 287 C119 296 131 302 140 309 C149 302 161 296 162 287 C164 276 147 271 140 282Z" fill="#fff" opacity=".95"/>
-        <path d="M90 256 C76 268 70 284 72 300" stroke="#FF9EB3" stroke-width="18" fill="none" stroke-linecap="round"/><circle cx="73" cy="303" r="10" fill="#FFE3C2"/>
-        <g id="waveArm"><path d="M190 256 C206 244 214 230 218 214" stroke="#FF9EB3" stroke-width="18" fill="none" stroke-linecap="round"/><circle cx="220" cy="207" r="12" fill="#FFE3C2"/><circle cx="211" cy="197" r="4.5" fill="#FFE3C2"/><circle cx="220" cy="193" r="4.5" fill="#FFE3C2"/><circle cx="229" cy="197" r="4.5" fill="#FFE3C2"/></g>
-        <rect x="128" y="205" width="24" height="40" rx="10" fill="#F0B98A"/>
-        <g class="headTilt">
-          <!-- cat-ear hood puffs - subtle, integrated -->
-          <circle cx="72" cy="58" r="22" fill="url(#hairG)"/><circle cx="208" cy="58" r="22" fill="url(#hairG)"/>
-          <path d="M62 48 L72 28 L84 48 Z" fill="#FFB3C6"/><path d="M196 48 L208 28 L218 48 Z" fill="#FFB3C6"/>
-          <ellipse cx="140" cy="148" rx="92" ry="84" fill="#FFE3C2"/>
-          <path d="M46 128 C40 178 42 216 54 238 L78 238 C68 208 66 166 68 132 Z" fill="url(#hairG)"/>
-          <path d="M234 128 C240 178 238 216 226 238 L202 238 C212 208 214 166 212 132 Z" fill="url(#hairG)"/>
-          <path d="M44 136 C34 62 82 28 140 28 C198 28 246 62 236 136 C230 98 216 78 200 68 C206 86 202 100 195 108 C190 80 172 62 156 58 C160 72 158 84 153 92 C149 70 145 64 140 64 C135 64 131 70 127 92 C122 84 120 72 124 58 C108 62 90 80 85 108 C78 100 74 86 80 68 C64 78 50 98 44 136Z" fill="url(#hairG)"/>
-          <circle cx="96" cy="84" r="17" fill="url(#hairG)"/><circle cx="140" cy="80" r="18" fill="url(#hairG)"/><circle cx="184" cy="84" r="17" fill="url(#hairG)"/>
-          <ellipse id="blushL" cx="92" cy="178" rx="17" ry="9" fill="#FF9E8A" opacity=".65"/><ellipse id="blushR" cx="188" cy="178" rx="17" ry="9" fill="#FF9E8A" opacity=".65"/>
-          <path id="browL" d="M84 120 Q102 111 120 119" stroke="#4A2C1A" stroke-width="5" fill="none" stroke-linecap="round"/><path id="browR" d="M160 119 Q178 111 196 120" stroke="#4A2C1A" stroke-width="5" fill="none" stroke-linecap="round"/>
-          <g id="eyeL"><ellipse cx="102" cy="150" rx="18" ry="24" fill="#fff"/><circle cx="102" cy="154" r="14" fill="#7C3F21"/><circle cx="102" cy="156" r="7.5" fill="#20130B"/><circle cx="96" cy="145" r="5" fill="#fff"/><circle cx="109" cy="162" r="2.6" fill="#fff"/></g>
-          <g id="eyeR"><ellipse cx="178" cy="150" rx="18" ry="24" fill="#fff"/><circle cx="178" cy="154" r="14" fill="#7C3F21"/><circle cx="178" cy="156" r="7.5" fill="#20130B"/><circle cx="172" cy="145" r="5" fill="#fff"/><circle cx="185" cy="162" r="2.6" fill="#fff"/></g>
-          <path d="M84 132 Q78 121 68 118" stroke="#332014" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M196 132 Q202 121 212 118" stroke="#332014" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-          <path id="lidL" d="M84 150 Q102 161 120 150" stroke="#332014" stroke-width="4" fill="none" stroke-linecap="round" opacity="0"/><path id="lidR" d="M160 150 Q178 161 196 150" stroke="#332014" stroke-width="4" fill="none" stroke-linecap="round" opacity="0"/>
-          <path d="M140 166 Q144 173 139 176" stroke="#D98E57" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-          <path id="mouth" d="M126 192 Q140 203 154 192" stroke="#B33A2B" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-          <path d="M100 48 Q124 38 150 40" stroke="#A67C52" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/>
-          <g transform="translate(196 86)"><ellipse cx="-11" cy="0" rx="13" ry="9" fill="#FF7D9C" transform="rotate(-22)"/><ellipse cx="13" cy="0" rx="13" ry="9" fill="#FF7D9C" transform="rotate(22)"/><circle r="6.5" fill="#E75480"/></g>
-          <path d="M68 94 L71.5 101.5 L79 104.5 L71.5 107.5 L68 115 L64.5 107.5 L57 104.5 L64.5 101.5 Z" fill="#E9A426"/>
-        </g>
-      </svg>
+  <!-- MAIN -->
+  <main>
+    <div class="topbar">
+      <button class="icon-btn" id="menuBtn" type="button" aria-label="Open sidebar"><svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      <div class="model-wrap">
+        <label for="modelSel" style="font-weight:900;font-size:.88rem">Mili</label>
+        <select id="modelSel" aria-label="Choose model">
+          <option value="auto" selected>Auto (best available)</option>
+          <option value="gemini-3.8-flash">Gemini 3.8 Flash</option>
+          <option value="gemini-3.7-flash">Gemini 3.7 Flash</option>
+          <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+          <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
+          <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash Lite</option>
+          <option value="gemini-flash-latest">Gemini Flash (latest)</option>
+        </select>
       </div>
+      <div class="sp"></div>
+      <div class="pill" id="voicePill">🔇 <span class="pill-txt">Voice OFF</span></div>
+      <div class="pill demo" id="brainPill" title="Brain status — amber: built-in demo brain, green: Gemini connected"><span class="dot"></span><span id="brainTxt">Demo Brain</span></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle theme"><svg class="ic" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+      <button class="icon-btn" id="settingsBtn" type="button" aria-label="Open settings"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
     </div>
-    <div class="speech-col">
-      <div class="speech"><b>Mili says</b><p id="speechText">Hi Shivansh! Big upgrade — my voice is now a real neural voice, not the phone's robotic one. Turn Voice ON below, tap Hear a preview, and listen!</p></div>
-      <div class="quick-feats"><span>👀 Blinks &amp; reacts</span><span>💬 Smarter replies</span><span>🎙️ Real neural voice</span><span>👆 Tap her to wave</span></div>
 
-      <!-- LIVE: SIMPLER -->
-      <div class="live" id="liveDock">
-        <div class="live-head"><strong><span class="orb" id="liveOrb">🎤</span> Live Talk — Simple Mode</strong><button class="btn btn-primary" id="liveBtn" type="button">▶ Start Live Talk</button></div>
-        <div class="live-status" id="liveStatus">No confusing steps. Tap <b>Start</b>, allow the mic, and just talk. Camera is <b>optional</b> — turn it on only if you want it.</div>
-        <div class="mode-row" role="group" aria-label="Live options">
-          <label><input type="checkbox" id="optCamera"> 📷 Camera ON (preview only)</label>
-          <label><input type="checkbox" id="optVoiceLive" checked> 🔊 Voice reply in Live</label>
+    <!-- MILI STAGE -->
+    <section class="stage" id="stage">
+      <div class="stage-inner">
+        <div class="avatar-wrap" id="avatarWrap">
+          <div class="avatar" id="avatar" role="button" tabindex="0" aria-label="Tap Mili" title="Tap Mili">
+          <svg viewBox="0 0 280 320" width="100%" role="img" aria-label="Mili, cute character with long hair and cat-ear hood">
+            <defs>
+              <linearGradient id="hairG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8B5A34"/><stop offset="100%" stop-color="#5C3A22"/></linearGradient>
+              <linearGradient id="sweaterG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFB8C6"/><stop offset="100%" stop-color="#FF8FAB"/></linearGradient>
+            </defs>
+            <path d="M78 320 C80 268 102 242 140 242 C178 242 200 268 202 320 Z" fill="url(#sweaterG)"/>
+            <path d="M116 246 L140 264 L164 246 L154 240 L140 252 L126 240 Z" fill="#FFF6F8"/>
+            <path d="M140 282 C133 271 116 276 118 287 C119 296 131 302 140 309 C149 302 161 296 162 287 C164 276 147 271 140 282Z" fill="#fff" opacity=".95"/>
+            <path d="M90 256 C76 268 70 284 72 300" stroke="#FF9EB3" stroke-width="18" fill="none" stroke-linecap="round"/><circle cx="73" cy="303" r="10" fill="#FFE3C2"/>
+            <g id="waveArm"><path d="M190 256 C206 244 214 230 218 214" stroke="#FF9EB3" stroke-width="18" fill="none" stroke-linecap="round"/><circle cx="220" cy="207" r="12" fill="#FFE3C2"/><circle cx="211" cy="197" r="4.5" fill="#FFE3C2"/><circle cx="220" cy="193" r="4.5" fill="#FFE3C2"/><circle cx="229" cy="197" r="4.5" fill="#FFE3C2"/></g>
+            <rect x="128" y="205" width="24" height="40" rx="10" fill="#F0B98A"/>
+            <g class="headTilt">
+              <circle cx="72" cy="58" r="22" fill="url(#hairG)"/><circle cx="208" cy="58" r="22" fill="url(#hairG)"/>
+              <path d="M62 48 L72 28 L84 48 Z" fill="#FFB3C6"/><path d="M196 48 L208 28 L218 48 Z" fill="#FFB3C6"/>
+              <ellipse cx="140" cy="148" rx="92" ry="84" fill="#FFE3C2"/>
+              <path d="M46 128 C40 178 42 216 54 238 L78 238 C68 208 66 166 68 132 Z" fill="url(#hairG)"/>
+              <path d="M234 128 C240 178 238 216 226 238 L202 238 C212 208 214 166 212 132 Z" fill="url(#hairG)"/>
+              <path d="M44 136 C34 62 82 28 140 28 C198 28 246 62 236 136 C230 98 216 78 200 68 C206 86 202 100 195 108 C190 80 172 62 156 58 C160 72 158 84 153 92 C149 70 145 64 140 64 C135 64 131 70 127 92 C122 84 120 72 124 58 C108 62 90 80 85 108 C78 100 74 86 80 68 C64 78 50 98 44 136Z" fill="url(#hairG)"/>
+              <circle cx="96" cy="84" r="17" fill="url(#hairG)"/><circle cx="140" cy="80" r="18" fill="url(#hairG)"/><circle cx="184" cy="84" r="17" fill="url(#hairG)"/>
+              <ellipse id="blushL" cx="92" cy="178" rx="17" ry="9" fill="#FF9E8A" opacity=".65"/><ellipse id="blushR" cx="188" cy="178" rx="17" ry="9" fill="#FF9E8A" opacity=".65"/>
+              <path id="browL" d="M84 120 Q102 111 120 119" stroke="#4A2C1A" stroke-width="5" fill="none" stroke-linecap="round"/><path id="browR" d="M160 119 Q178 111 196 120" stroke="#4A2C1A" stroke-width="5" fill="none" stroke-linecap="round"/>
+              <g id="eyeL"><ellipse cx="102" cy="150" rx="18" ry="24" fill="#fff"/><circle cx="102" cy="154" r="14" fill="#7C3F21"/><circle cx="102" cy="156" r="7.5" fill="#20130B"/><circle cx="96" cy="145" r="5" fill="#fff"/><circle cx="109" cy="162" r="2.6" fill="#fff"/></g>
+              <g id="eyeR"><ellipse cx="178" cy="150" rx="18" ry="24" fill="#fff"/><circle cx="178" cy="154" r="14" fill="#7C3F21"/><circle cx="178" cy="156" r="7.5" fill="#20130B"/><circle cx="172" cy="145" r="5" fill="#fff"/><circle cx="185" cy="162" r="2.6" fill="#fff"/></g>
+              <path d="M84 132 Q78 121 68 118" stroke="#332014" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M196 132 Q202 121 212 118" stroke="#332014" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path id="lidL" d="M84 150 Q102 161 120 150" stroke="#332014" stroke-width="4" fill="none" stroke-linecap="round" opacity="0"/><path id="lidR" d="M160 150 Q178 161 196 150" stroke="#332014" stroke-width="4" fill="none" stroke-linecap="round" opacity="0"/>
+              <path d="M140 166 Q144 173 139 176" stroke="#D98E57" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+              <path id="mouth" d="M126 192 Q140 203 154 192" stroke="#B33A2B" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M100 48 Q124 38 150 40" stroke="#A67C52" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/>
+              <g transform="translate(196 86)"><ellipse cx="-11" cy="0" rx="13" ry="9" fill="#FF7D9C" transform="rotate(-22)"/><ellipse cx="13" cy="0" rx="13" ry="9" fill="#FF7D9C" transform="rotate(22)"/><circle r="6.5" fill="#E75480"/></g>
+              <path d="M68 94 L71.5 101.5 L79 104.5 L71.5 107.5 L68 115 L64.5 107.5 L57 104.5 L64.5 101.5 Z" fill="#E9A426"/>
+            </g>
+          </svg>
+          </div>
         </div>
-        <div class="live-body">
-          <div class="cam" id="camWrap" style="display:none"><video id="camVideo" autoplay playsinline muted></video><span class="cam-tag">● YOU — PREVIEW ONLY</span></div>
-          <div>
-            <div class="heard-box" id="liveHeard"><b>Status:</b> Waiting to start. Your words will appear here as you speak.</div>
-            <div class="meter" id="meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-            <div style="font-size:.82rem;color:var(--muted)">Tip: Speak one short sentence, pause, and let Mili answer. If she misses you, she will automatically listen again — no need to tap anything.</div>
+        <div>
+          <div class="speech"><b>Mili says</b><p id="speechText">Hi Shivansh! Welcome to my new AI-style home — chats on the left, my brain up top, and everything you love still here. Turn Voice ON in Settings and tap Hear a preview!</p></div>
+          <button class="btn btn-ghost stage-toggle" id="stageToggle" type="button" style="width:auto;padding:8px 14px;min-height:40px">Hide Mili &amp; Live Talk</button>
+
+          <!-- LIVE TALK -->
+          <div class="live" id="liveDock">
+            <div class="live-head"><strong><span class="orb" id="liveOrb">🎤</span> Live Talk</strong><button class="btn btn-primary" id="liveBtn" type="button">▶ Start Live Talk</button></div>
+            <div class="live-status" id="liveStatus">Hands-free conversation. Tap <b>Start</b>, allow the mic, and just talk. Camera is <b>optional</b>.</div>
+            <div class="mode-row" role="group" aria-label="Live options">
+              <label><input type="checkbox" id="optCamera"> 📷 Camera ON (preview only)</label>
+              <label><input type="checkbox" id="optVoiceLive" checked> 🔊 Voice reply in Live</label>
+            </div>
+            <div class="live-body">
+              <div class="cam" id="camWrap" style="display:none"><video id="camVideo" autoplay playsinline muted></video><span class="cam-tag">● YOU — PREVIEW ONLY</span></div>
+              <div>
+                <div class="heard-box" id="liveHeard"><b>Status:</b> Waiting to start. Your words will appear here as you speak.</div>
+                <div class="meter" id="meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <div style="font-size:.82rem;color:var(--muted)">Tip: Speak one short sentence, pause, and let Mili answer. If she misses you, she will automatically listen again — no need to tap anything.</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<section class="chat">
-  <div class="chat-head"><strong>💬 Chat with Mili</strong><span>Typing always works — voice is optional</span></div>
-  <div class="log" id="chatLog"><div class="msg char">Hi Shivansh! 🙏 New upgrade: my voice is now a real neural voice (SpeechSter) — warm and human, not robotic. Turn Voice ON in Voice Settings, tap Hear a preview, then chat with me!</div><div class="typing" id="typing"><i></i><i></i><i></i></div></div>
-  <div class="composer">
-    <form class="row" id="chatForm"><input type="text" id="userInput" placeholder="Type a message for Mili…" autocomplete="off" aria-label="Message"/><button class="btn btn-send" type="submit">Send ➤</button><button class="btn btn-mic" id="micBtn" type="button" aria-label="Speak once" title="Tap and speak once">🎤</button></form>
-    <p class="hint">🔇 Voice is OFF by default so you can chat quietly anywhere. Turn it ON in Voice Settings below when you want to hear her.</p>
-    <div class="chips">
-      <button type="button" data-q="Hi Mili, how are you?">👋 Say hello</button>
-      <button type="button" data-q="Tell me a funny joke">😂 Joke</button>
-      <button type="button" data-q="Tell me a short story">📖 Story</button>
-      <button type="button" data-q="I am feeling bored">🥱 I'm bored</button>
-      <button type="button" data-q="Give me a video idea for Mythash">🎬 Mythash idea</button>
-      <button type="button" data-q="Give me a video idea for PaStory">📚 PaStory idea</button>
-      <button type="button" data-q="What can you do?">✨ What can you do?</button>
-      <button type="button" data-q="Motivate me">💪 Motivate me</button>
+    <!-- CHAT -->
+    <div class="scroll" id="scroll">
+      <div class="welcome" id="welcome">
+        <h2>How can <span>Mili</span> help today?</h2>
+        <p>Ask anything, attach a photo for her to look at, or tap a suggestion below.</p>
+      </div>
+      <div class="log" id="chatLog"><div class="typing" id="typing"><i></i><i></i><i></i></div></div>
     </div>
-  </div>
-</section>
 
-<div class="grid">
+    <!-- COMPOSER -->
+    <div class="composer-wrap">
+      <div class="composer-inner">
+        <div class="chips" id="chips">
+          <button type="button" data-q="Hi Mili, how are you?">👋 Say hello</button>
+          <button type="button" data-q="Tell me a funny joke">😂 Joke</button>
+          <button type="button" data-q="Tell me a short story">📖 Story</button>
+          <button type="button" data-q="I am feeling bored">🥱 I'm bored</button>
+          <button type="button" data-q="Give me a video idea for Mythash">🎬 Mythash idea</button>
+          <button type="button" data-q="Give me a video idea for PaStory">📚 PaStory idea</button>
+          <button type="button" data-q="What can you do?">✨ What can you do?</button>
+          <button type="button" data-q="Motivate me">💪 Motivate me</button>
+        </div>
+        <div class="att-chip" id="attChip"><img id="attThumb" alt="Attached photo preview"><span id="attName">Photo attached</span><button type="button" id="attRemove" aria-label="Remove photo"><svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+        <form class="composer" id="chatForm">
+          <input type="file" id="fileInput" accept="image/*" hidden>
+          <button class="cbtn" id="attachBtn" type="button" aria-label="Attach a photo" title="Attach a photo — ask Mili about it"><svg class="ic" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
+          <textarea id="userInput" rows="1" placeholder="Message Mili…" autocomplete="off" aria-label="Message"></textarea>
+          <button class="cbtn mic" id="micBtn" type="button" aria-label="Speak once" title="Tap and speak once"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
+          <button class="cbtn" id="liveQuickBtn" type="button" aria-label="Toggle Live Talk" title="Live Talk — hands-free conversation"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M5.6 5.6l2.2 2.2M16.2 16.2l2.2 2.2M3 12h3M18 12h3M5.6 18.4l2.2-2.2M16.2 7.8l2.2-2.2"/><circle cx="12" cy="12" r="3.2"/></svg></button>
+          <button class="cbtn send" type="submit" aria-label="Send message"><svg class="ic" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></button>
+        </form>
+        <p class="hint">🔇 Voice is OFF by default — turn it ON in Settings when you want to hear her. Attach a photo and ask Mili about it (needs Gemini connected).</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- SETTINGS SHEET -->
+<div class="sheet-scrim" id="sheetScrim"></div>
+<aside class="sheet" id="sheet" aria-label="Settings">
+  <div class="sheet-head"><strong>Settings</strong><button class="icon-btn" id="sheetClose" type="button" aria-label="Close settings"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+
   <section class="panel">
-    <h2>🔊 Voice Settings — Real Neural Voice</h2>
-    <p>Mili now uses <b>SpeechSter (freeapi.pro)</b> — Microsoft Edge neural voices. These sound like a real person, not a robot. <b>Free, no sign-up, no API key.</b> Needs internet. If it is slow or down, Mili automatically falls back to your phone's voice.</p>
+    <h2>🔊 Voice — Real Neural Voice</h2>
+    <p>Mili uses <b>SpeechSter (freeapi.pro)</b> — Microsoft Edge neural voices that sound like a real person. <b>Free, no sign-up, no API key.</b> Needs internet. If it is slow or down, she automatically falls back to your phone's voice.</p>
     <label class="switch"><input type="checkbox" id="voiceToggle"><span>Mili's voice ON — off by default for quiet chatting</span></label>
     <label for="engineSel">Voice engine</label>
     <select id="engineSel"><option value="neural" selected>Neural voice — SpeechSter (recommended, needs internet)</option><option value="phone">Phone voice only (offline backup)</option></select>
@@ -224,33 +355,57 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px;padd
 
   <section class="panel">
     <h2>🧠 Real AI Brain — Gemini (Free)</h2>
-    <p>Mili's built-in brain is now much smarter, but for truly fresh answers to <b>any</b> question, connect the free Gemini key. She will remember your chat and reply in her own words. Her model chain now includes <b>Gemini 3.5 Flash Lite (500 replies/day)</b> — so she can keep answering for much longer, around <b>560 replies a day</b> in total.</p>
+    <p>Connect the free Gemini key for fresh answers to <b>any</b> question — including questions about photos you attach. The model chain includes <b>Gemini 3.5 Flash Lite (500 replies/day)</b>, so she can keep answering for much longer — around <b>560 replies a day</b> in total. Use the model picker at the top to force one model, or leave it on Auto.</p>
     <label for="apiKey">Gemini API Key</label>
     <input type="password" id="apiKey" placeholder="Starts with AIza…" autocomplete="off">
     <button class="btn btn-teal" id="connectBtn" type="button" style="margin-top:12px">Connect Gemini</button>
     <button class="btn btn-ghost" id="disconnectBtn" type="button" style="margin-top:8px">Use Built-in Brain instead</button>
     <div class="msg2" id="keyMsg" role="status"></div>
     <ol class="steps"><li>Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li><li>Tap <b>Create API Key</b> — free, no card.</li><li>Paste it above and tap Connect.</li></ol>
-    <p class="note">How the limit works: Mili tries models one by one. When one model's daily limit fills up, she automatically switches to the next — including 3.5 Flash Lite, which alone allows about 500 replies a day. Key stays only in this page's memory — never saved. Close the page and it is gone.</p>
+    <p class="note">How the limit works: Mili tries models one by one. When one model's daily limit fills up, she automatically switches to the next — including 3.5 Flash Lite, which alone allows about 500 replies a day. Key stays only in this page's memory — never saved. Close the page and it is gone. Chats are also kept in this tab's memory only.</p>
     <label for="langSel">Chat language</label>
     <select id="langSel"><option value="en-IN" selected>English</option><option value="hi-IN">Hindi (हिन्दी)</option></select>
   </section>
-</div>
 
-<footer>Mili v3 — Real neural voice by SpeechSter (freeapi.pro, Microsoft Edge voices, no key needed) with automatic phone-voice fallback. Plus smarter replies and simple Live Talk. Works best in Chrome.</footer>
-</div>
+  <p style="text-align:center;color:var(--muted);font-size:.8rem;margin-top:18px">Mili — neural voice by SpeechSter (freeapi.pro, Microsoft Edge voices) with phone-voice fallback. Works best in Chrome.</p>
+</aside>
+<div class="toast" id="toast" role="status"></div>
 
 <script>
 (function(){
 "use strict";
 var $=function(id){return document.getElementById(id)};
-var chatLog=$("chatLog"),typing=$("typing"),form=$("chatForm"),input=$("userInput"),micBtn=$("micBtn"),speechText=$("speechText");
+var chatLog=$("chatLog"),typing=$("typing"),form=$("chatForm"),input=$("userInput"),micBtn=$("micBtn"),speechText=$("speechText"),scrollEl=$("scroll");
 var mouth=$("mouth"),eyeL=$("eyeL"),eyeR=$("eyeR"),lidL=$("lidL"),lidR=$("lidR"),browL=$("browL"),browR=$("browR"),blushL=$("blushL"),blushR=$("blushR"),avatar=$("avatar");
 var voiceToggle=$("voiceToggle"),voiceSel=$("voiceSel"),langSel=$("langSel"),voicePill=$("voicePill"),brainPill=$("brainPill"),brainTxt=$("brainTxt");
 var rateRange=$("rateRange"),pitchRange=$("pitchRange"),rateVal=$("rateVal"),pitchVal=$("pitchVal");
 var geminiKey="",history=[],speaking=false,busy=false,mouthTimer=null,lastTopic="";
 
-function updatePill(){ voicePill.textContent = voiceToggle.checked ? "🔊 Voice ON" : "🔇 Voice OFF"; voicePill.className="pill"+(voiceToggle.checked?" voice-on":""); }
+/* ---------- Toast ---------- */
+var toastTimer=null;
+function toast(msg){ var t=$("toast"); t.textContent=msg; t.classList.add("on"); if(toastTimer)clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove("on")},2200) }
+
+/* ---------- Theme ---------- */
+function isDark(){ var dt=document.documentElement.getAttribute("data-theme"); if(dt)return dt==="dark"; return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches }
+function syncThemeLabel(){ $("themeTxt2").textContent=isDark()?"Light theme":"Dark theme" }
+function toggleTheme(){ document.documentElement.setAttribute("data-theme",isDark()?"light":"dark"); syncThemeLabel() }
+$("themeBtn").addEventListener("click",toggleTheme); $("themeBtn2").addEventListener("click",toggleTheme); syncThemeLabel();
+
+/* ---------- Sidebar & settings sheet ---------- */
+var sidebar=$("sidebar"),scrim=$("scrim"),sheet=$("sheet"),sheetScrim=$("sheetScrim");
+function openSide(){ sidebar.classList.add("open"); scrim.classList.add("on") }
+function closeSide(){ sidebar.classList.remove("open"); scrim.classList.remove("on") }
+$("menuBtn").addEventListener("click",function(){ sidebar.classList.contains("open")?closeSide():openSide() });
+scrim.addEventListener("click",closeSide);
+function openSheet(){ sheet.classList.add("open"); sheetScrim.classList.add("on") }
+function closeSheet(){ sheet.classList.remove("open"); sheetScrim.classList.remove("on") }
+$("settingsBtn").addEventListener("click",openSheet); $("settingsBtn2").addEventListener("click",function(){closeSide(); openSheet()});
+$("sheetClose").addEventListener("click",closeSheet); sheetScrim.addEventListener("click",closeSheet);
+
+/* ---------- Stage toggle ---------- */
+$("stageToggle").addEventListener("click",function(){ var st=$("stage"); var closed=st.classList.toggle("closed"); this.textContent=closed?"Show Mili & Live Talk":"Hide Mili & Live Talk" });
+
+function updatePill(){ voicePill.innerHTML = voiceToggle.checked ? "🔊 <span class=\"pill-txt\">Voice ON</span>" : "🔇 <span class=\"pill-txt\">Voice OFF</span>"; voicePill.className="pill"+(voiceToggle.checked?" voice-on":""); }
 voiceToggle.addEventListener("change",function(){updatePill(); if(!voiceToggle.checked) stopSpeaking();});
 rateRange.addEventListener("input",function(){rateVal.textContent=(+rateRange.value<=0.86?"Slow & calm":+rateRange.value>=1.02?"Lively":"Natural")+" ("+(+rateRange.value).toFixed(2)+"×)";});
 pitchRange.addEventListener("input",function(){pitchVal.textContent=(+pitchRange.value<=0.92?"Deeper":+pitchRange.value>=1.08?"Cheerful":"Warm")+" ("+(+pitchRange.value).toFixed(2)+")";});
@@ -279,7 +434,7 @@ var shapes=[["open1",1],["open2",1],["o",1],["open1",1],["smile",0]];
 function startMouth(){stopMouthOnly(); var i=0; mouthTimer=setInterval(function(){var s=shapes[i%shapes.length]; setMouth(s[0],!!s[1]); i++},160); avatar.classList.add("talking")}
 function stopMouthOnly(){if(mouthTimer)clearInterval(mouthTimer); mouthTimer=null}
 function stopMouth(){stopMouthOnly(); avatar.classList.remove("talking"); setMouth("smile")}
-function splitSpeech(t){ /* split into clauses for breaths */ var parts=t.match(/[^.!?…]+[.!?…]*/g)||[t]; var out=[]; parts.forEach(function(p){p=p.trim(); if(!p)return; if(p.length<=90){out.push(p);return} var subs=p.split(/[,;:—]\s*/); var cur=""; subs.forEach(function(s){if((cur+" "+s).length>85&&cur){out.push(cur.trim());cur=s}else cur+=(cur?", ":"")+s}); if(cur)out.push(cur.trim())}); return out.length?out:[t] }
+function splitSpeech(t){ var parts=t.match(/[^.!?…]+[.!?…]*/g)||[t]; var out=[]; parts.forEach(function(p){p=p.trim(); if(!p)return; if(p.length<=90){out.push(p);return} var subs=p.split(/[,;:—]\s*/); var cur=""; subs.forEach(function(s){if((cur+" "+s).length>85&&cur){out.push(cur.trim());cur=s}else cur+=(cur?", ":"")+s}); if(cur)out.push(cur.trim())}); return out.length?out:[t] }
 function splitForApi(t){ var sents=t.match(/[^.!?…]+[.!?…]*/g)||[t]; var out=[],cur=""; sents.forEach(function(s){s=s.trim(); if(!s)return; if(s.length>280){ if(cur){out.push(cur);cur=""} for(var i=0;i<s.length;i+=280)out.push(s.slice(i,i+280)); return } if((cur+" "+s).length>280&&cur){out.push(cur);cur=s}else cur=cur?cur+" "+s:s }); if(cur)out.push(cur); return out.length?out:[t] }
 function speakPhone(clean,token){
   if(!("speechSynthesis" in window)){ speaking=false; stopMouth(); return }
@@ -342,37 +497,35 @@ var usedJoke=0,usedStory=0,usedMyth=0,usedPa=0;
 function demoBrain(q){
   var t=q.toLowerCase();
   if(/(how are you|how is it going|kaisi ho)/.test(t)) return pick(["I'm really good today, thank you for asking! 😊 More importantly — how are YOU? Busy day, or a relaxed one? Tell me one good thing about today.","Doing great! Fresh makeover, fresh brain — I feel brand new. How about you, Shivansh? All good at your end?"]);
-  if(/(^|\b)(hi|hello|hey|namaste|namaskar|hola)(\b|!|\s)/.test(t)||t.length<4) return pick(["Hello Shivansh! 🙏 Lovely to see you. Shall we do something fun — a joke, a tiny story — or something useful, like a video idea?","Hey! 👋 I'm all ears. Type anything, or tap a chip below. The Mythash and PaStory idea chips are my favourites!"]);
-  if(/(your name|who are you|tum kaun|about yourself)/.test(t)) return "I'm Mili — your talking companion who lives right here in your browser. I chat, tell jokes and stories, suggest video ideas for Mythash and PaStory, and I can talk out loud and hold a live conversation. No app, no download — just this page!";
+  if(/(^|\b)(hi|hello|hey|namaste|namaskar|hola)(\b|!|\s)/.test(t)||t.length<4) return pick(["Hello Shivansh! 🙏 Lovely to see you. Shall we do something fun — a joke, a tiny story — or something useful, like a video idea?","Hey! 👋 I'm all ears. Type anything, tap a chip, or attach a photo and ask me about it. The Mythash and PaStory idea chips are my favourites!"]);
+  if(/(your name|who are you|tum kaun|about yourself)/.test(t)) return "I'm Mili — your talking companion who lives right here in your browser. I chat, tell jokes and stories, suggest video ideas for Mythash and PaStory, look at photos you attach, and I can talk out loud and hold a live conversation. No app, no download — just this page!";
   if(/(joke|funny|make me laugh|hasao)/.test(t)){ var j=jokes[usedJoke%jokes.length]; usedJoke++; lastTopic="joke"; return j; }
   if(/(another|one more|aur ek|next)/.test(t)&&lastTopic==="joke"){ var j2=jokes[usedJoke%jokes.length]; usedJoke++; return "Here's another one! "+j2; }
   if(/(story|kahani)/.test(t)){ var s=stories[usedStory%stories.length]; usedStory++; lastTopic="story"; return s; }
   if(/(mythash)/.test(t)){ var m=mythashIdeas[usedMyth%mythashIdeas.length]; usedMyth++; lastTopic="mythash"; return m; }
   if(/(pastory)/.test(t)){ var p=pastoryIdeas[usedPa%pastoryIdeas.length]; usedPa++; lastTopic="pastory"; return p; }
-  if(/(video idea|channel idea|youtube idea|content idea)/.test(t)) return "I have ideas for both your channels! 🎬 For Mythash (fantasy): a promise-or-loyalty twist story. 📚 For PaStory (history): the hidden history of an everyday thing. Tap the Mythash or PaStory chip below and I'll give you a full ready idea — tap again for a different one!";
+  if(/(video idea|channel idea|youtube idea|content idea)/.test(t)) return "I have ideas for both your channels! 🎬 For Mythash (fantasy): a promise-or-loyalty twist story. 📚 For PaStory (history): the hidden history of an everyday thing. Tap the Mythash or PaStory chip and I'll give you a full ready idea — tap again for a different one!";
   if(/(bored|boring|bore ho)/.test(t)) return pick(["Bored? Let's fix that in 10 seconds 🥱➡️😄 — I can tell you a joke, a 60-second story with a twist, or give you a Mythash video idea so good you'll want to start scripting. Pick one!","Boredom detected! Quick cure: one joke, one tiny story, or one wild 'what if' question. My pick for you: the story — it has a twist ending. Say 'story'!"]);
   if(/(sad|tired|stress|upset|down|thak gaya|pareshan)/.test(t)) return "Hey… take a slow breath with me. In… and out. 🌿 Tough days are part of every creator's story — even the biggest channels had months of almost no views. Rest a little, then one small step. Want a light joke to reset your mood, or shall we just chat?";
   if(/(motivat|give up|haar|fail)/.test(t)) return "Listen to this, Shivansh 💪 — Views are a lagging indicator. Skill is the leading one. Every script you write, every thumbnail you study, is compounding quietly — exactly like Meera's mango tree. Roots first, shade later. One video at a time. What's the next ONE small step — script, thumbnail, or research?";
-  if(/(what can you do|help|features|kya kar sakti)/.test(t)) return "Here's my honest list ✨ — 1) Chat naturally and remember our conversation. 2) Jokes & short stories (tap again for a new one). 3) Fresh video ideas for Mythash & PaStory. 4) Talk out loud in a warm, natural voice. 5) Live Talk — you speak, I answer, hands-free. 6) With a free Gemini key, I can answer almost ANY question. Try me!";
+  if(/(what can you do|help|features|kya kar sakti)/.test(t)) return "Here's my honest list ✨ — 1) Chat naturally and remember our conversation, with separate saved chats in the sidebar. 2) Jokes & short stories (tap again for a new one). 3) Fresh video ideas for Mythash & PaStory. 4) Look at photos you attach and answer questions about them (with Gemini connected). 5) Talk out loud in a warm, natural voice. 6) Live Talk — you speak, I answer, hands-free. 7) With a free Gemini key, I can answer almost ANY question. Try me!";
   if(/(time|date|today|day is)/.test(t)){var n=new Date(); return "Right now it's "+n.toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit"})+" on "+n.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})+". Anything you'd like to plan for today?"}
   if(/(thank|shukriya|dhanyavaad)/.test(t)) return pick(["You're most welcome! 😊 That's what I'm here for. Anything else — joke, story, idea?","Anytime, Shivansh! 🙏 Happy to help. Shall we do one more fun thing before you go?"]);
   if(/(bye|good night|goodbye|see you)/.test(t)) return "Goodbye for now, Shivansh! 👋 I'll be right here whenever you're back — same page, same Mili. Take care!";
-  if(/(gemini|api key|real brain| ai )/.test(t)) return "My real AI brain is Gemini 🧠 — with a free key (panel below) I stop using ready-made replies and think up a fresh answer to everything, remembering our whole chat. Without a key, my built-in brain still handles jokes, stories, ideas and motivation really well. Want the 3 steps? They're written right under the key box!";
+  if(/(gemini|api key|real brain| ai )/.test(t)) return "My real AI brain is Gemini 🧠 — with a free key (Settings, top right) I stop using ready-made replies and think up a fresh answer to everything, remembering our whole chat — and I can even look at photos you attach. Without a key, my built-in brain still handles jokes, stories, ideas and motivation really well. Want the 3 steps? They're written right under the key box in Settings!";
   if(/(sing|song|music)/.test(t)) return "I can't sing a full song (my voice would file a complaint! 😄), but I can hum you a tiny line: 'La la laa, Shivansh is here, la la laa, spread some cheer!' For real songs, your BoomBox channel is the expert — not me!";
   if(/(love|like you|friend)/.test(t)) return "Aww, that made my pixels blush! 💖 You're my favourite human to chat with too. Friends? Always. Now — joke, story, or a brilliant video idea to celebrate?";
   if(/(weather|mausam)/.test(t)) return "I live inside this page, so I can't peek out of your window yet! 🌤️ But here's a trick: tell me your city and how the sky looks, and I'll help you plan around it. For a live forecast, your weather app will beat me every time — honesty first!";
-  if(/(capital of|who is|what is|meaning of|how many)/.test(t)) return "Good question — that one deserves a precise answer, and precision is exactly what my Gemini brain is for. 🔑 Connect the free key below and ask me again — I'll answer properly. Meanwhile, want a joke or a story while you decide?";
-  /* Smart fallback — never a dead end */
+  if(/(capital of|who is|what is|meaning of|how many)/.test(t)) return "Good question — that one deserves a precise answer, and precision is exactly what my Gemini brain is for. 🔑 Connect the free key in Settings and ask me again — I'll answer properly. Meanwhile, want a joke or a story while you decide?";
   return pick([
-    "That's an interesting one! 🤔 In my built-in brain I shine brightest at jokes, short stories, motivation, and video ideas for Mythash & PaStory — try one of those chips! For open questions on any topic, connect the free Gemini key below and I'll answer in my own words.",
-    "Hmm, let me be honest — that is a little beyond my built-in replies. Two good options: tap a chip below (jokes, stories and channel ideas are my speciality), or add the free Gemini key and ask me again — then I can really think it through with you. Which one?",
-    "I want to give you a good answer, not a random one — so here's the truth: open-ended questions need my Gemini brain (free key, panel below). Until then, I can still make you laugh, tell you a twist story, or hand you a ready Mythash idea. Your pick!"
+    "That's an interesting one! 🤔 In my built-in brain I shine brightest at jokes, short stories, motivation, and video ideas for Mythash & PaStory — try one of those chips! For open questions on any topic, connect the free Gemini key in Settings and I'll answer in my own words.",
+    "Hmm, let me be honest — that is a little beyond my built-in replies. Two good options: tap a chip below (jokes, stories and channel ideas are my speciality), or add the free Gemini key in Settings and ask me again — then I can really think it through with you. Which one?",
+    "I want to give you a good answer, not a random one — so here's the truth: open-ended questions need my Gemini brain (free key, in Settings). Until then, I can still make you laugh, tell you a twist story, or hand you a ready Mythash idea. Your pick!"
   ]);
 }
 function guessMood(txt){var t=txt.toLowerCase(); if(/(sorry|sad|tough|breath|rest)/.test(t))return "sad"; if(/(wow|really|surprise)/.test(t))return "surprise"; if(/(idea|plan|think|question)/.test(t))return "think"; return "happy"}
 
-/* Gemini — FIXED: old models gemini-2.0-flash / gemini-1.5-flash are retired (404 for new keys).
-   Use current models with fallback chain + real error details so a valid key is never blamed. */
+/* Gemini — 6-model chain with quota fallback + model picker + vision */
 var GEMINI_MODELS=["gemini-3.8-flash","gemini-3.7-flash","gemini-2.5-flash","gemini-2.5-flash-lite","gemini-3.5-flash-lite","gemini-flash-latest"];
 var geminiModelUsed="";
 function geminiErrorInfo(status,bodyText){
@@ -387,9 +540,11 @@ function geminiErrorInfo(status,bodyText){
   if(msg)return{code:"api",label:"Gemini error ("+status+"): "+msg.slice(0,180)};
   return{code:"http",label:"Gemini did not respond (HTTP "+status+"). Check your internet and try again."};
 }
-function geminiReply(q){
+function geminiReply(q,img){
   var sys="You are Mili, a warm, witty talking companion chatting with Shivansh, a YouTube creator (channels: Mythash - English AI fantasy stories, PaStory - history of everyday things, BoomBox - Hindi AI music). Reply in simple, clear English unless he writes in Hindi. Keep it SHORT: 2-4 short sentences max, easy to speak aloud. Be conversational and specific, never generic. Ask a follow-up question sometimes. Very few emojis (0-1). Never say you are an AI language model.";
-  var contents=[]; history.forEach(function(h){contents.push({role:h.role,parts:[{text:h.text}]})}); contents.push({role:"user",parts:[{text:q}]});
+  var contents=[]; history.forEach(function(h){contents.push({role:h.role,parts:[{text:h.text}]})});
+  var lastParts=[{text:q}]; if(img&&img.data)lastParts.push({inline_data:{mime_type:img.mime,data:img.data}});
+  contents.push({role:"user",parts:lastParts});
   var payload=JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:contents,generationConfig:{maxOutputTokens:280,temperature:0.85}});
   function tryModel(model){
     return fetch("https://generativelanguage.googleapis.com/v1beta/models/"+model+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":geminiKey},body:payload})
@@ -399,83 +554,219 @@ function geminiReply(q){
     })
     .then(function(d){var txt=""; try{txt=d.candidates[0].content.parts.map(function(p){return p.text||""}).join("").trim()}catch(e){} if(!txt){var err=new Error("Gemini replied empty this time. Try again."); err.code="empty"; throw err} geminiModelUsed=model; return txt});
   }
-  /* Try the model that already worked first, then the rest in order. Skip remaining models only on a real key error. */
-  var order=GEMINI_MODELS.slice(); if(geminiModelUsed&&order.indexOf(geminiModelUsed)>0){order.splice(order.indexOf(geminiModelUsed),1); order.unshift(geminiModelUsed)}
+  var order=GEMINI_MODELS.slice();
+  var pref=$("modelSel").value;
+  if(pref&&pref!=="auto"&&order.indexOf(pref)>-1){ order.splice(order.indexOf(pref),1); order.unshift(pref); }
+  else if(geminiModelUsed&&order.indexOf(geminiModelUsed)>0){ order.splice(order.indexOf(geminiModelUsed),1); order.unshift(geminiModelUsed) }
   var chain=Promise.reject(new Error("start")); var lastErr=null;
   order.forEach(function(m){ chain=chain.catch(function(e){ if(e&&e.code==="bad_key")throw e; return tryModel(m).catch(function(err){lastErr=err; throw err}) }) });
   return chain.catch(function(e){ throw (e&&e.code==="bad_key")?e:(lastErr||e) });
 }
 
-/* Chat flow */
-function addMsg(cls,text){var d=document.createElement("div"); d.className="msg "+cls; d.textContent=text; chatLog.insertBefore(d,typing); chatLog.scrollTop=chatLog.scrollHeight; return d}
-function charReply(text){typing.style.display="none"; addMsg("char",text); speechText.textContent=text; setMood(guessMood(text)); speak(text)}
-function send(text){ var q=(text||"").trim(); if(!q||busy)return; busy=true; addMsg("user",q); input.value=""; setMood("think"); typing.style.display="block"; chatLog.scrollTop=chatLog.scrollHeight;
-  var finish=function(r){history.push({role:"user",text:q}); history.push({role:"model",text:r}); if(history.length>14)history=history.slice(-14); charReply(r); busy=false};
-  function viaGemini(reasonNote){
-    if(reasonNote)addMsg("sys",reasonNote);
-    geminiReply(q).then(finish).catch(function(gerr){addMsg("sys","Gemini didn't respond — "+((gerr&&gerr.message)||"check connection")+" Answering with my built-in brain instead."); finish(demoBrain(q))});
-  }
-  function viaDemo(note){ if(note)addMsg("sys",note); setTimeout(function(){finish(demoBrain(q))},350) }
-  if(geminiKey){ geminiReply(q).then(finish).catch(function(err){addMsg("sys","Gemini didn't respond — "+((err&&err.message)||"check connection")+" Answering with my built-in brain instead."); finish(demoBrain(q))}) } else { setTimeout(function(){finish(demoBrain(q))},600) }
+/* ---------- Chats (this tab's memory only) ---------- */
+var chats=[], currentChat=null, nextChatId=1, pendingImg=null;
+var ICO_COPY='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+var ICO_SPEAK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.6 5.4a9 9 0 0 1 0 13.2"/></svg>';
+var ICO_REGEN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>';
+var ICO_TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>';
+function copyText(t){
+  function done(){ toast("Copied to clipboard") }
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done).catch(function(){ fallback() }) } else fallback();
+  function fallback(){ var ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy"); done()}catch(e){ toast("Copy failed — long-press the message instead") } ta.remove() }
 }
-form.addEventListener("submit",function(e){e.preventDefault(); send(input.value)});
-document.querySelectorAll(".chips button").forEach(function(b){b.addEventListener("click",function(){send(b.getAttribute("data-q"))})});
+function buildMsgEl(rec){
+  var d=document.createElement("div"); d.className="msg "+rec.cls;
+  if(rec.imgUrl){ var im=document.createElement("img"); im.className="att"; im.src=rec.imgUrl; im.alt="Photo you attached"; d.appendChild(im) }
+  var sp=document.createElement("span"); sp.textContent=rec.text; d.appendChild(sp);
+  if(rec.cls==="char"||rec.cls==="user"){
+    var acts=document.createElement("div"); acts.className="acts";
+    var cb=document.createElement("button"); cb.type="button"; cb.title="Copy"; cb.setAttribute("aria-label","Copy message"); cb.innerHTML=ICO_COPY;
+    cb.addEventListener("click",function(){ copyText(rec.text) }); acts.appendChild(cb);
+    if(rec.cls==="char"){
+      var sb=document.createElement("button"); sb.type="button"; sb.title="Hear this reply"; sb.setAttribute("aria-label","Hear this reply"); sb.innerHTML=ICO_SPEAK;
+      sb.addEventListener("click",function(){ speak(rec.text,true) }); acts.appendChild(sb);
+      var rb=document.createElement("button"); rb.type="button"; rb.title="Regenerate reply"; rb.setAttribute("aria-label","Regenerate reply"); rb.innerHTML=ICO_REGEN;
+      rb.addEventListener("click",regenerate); acts.appendChild(rb);
+    }
+    d.appendChild(acts);
+  }
+  return d;
+}
+function scrollDown(){ scrollEl.scrollTop=scrollEl.scrollHeight }
+function addMsg(cls,text,imgUrl){
+  var rec={cls:cls,text:text,imgUrl:imgUrl||null};
+  if(currentChat){ currentChat.msgs.push(rec); if(cls==="user"&&currentChat.title==="New chat"){ currentChat.title=text.length>42?text.slice(0,42)+"…":text } }
+  var d=buildMsgEl(rec); chatLog.insertBefore(d,typing); scrollDown(); renderChatList(); syncWelcome(); return d;
+}
+function renderLog(){
+  var nodes=chatLog.querySelectorAll(".msg"); for(var i=0;i<nodes.length;i++)nodes[i].remove();
+  if(currentChat) currentChat.msgs.forEach(function(rec){ chatLog.insertBefore(buildMsgEl(rec),typing) });
+  scrollDown(); syncWelcome();
+}
+function syncWelcome(){ var has=currentChat&&currentChat.msgs.some(function(m){return m.cls==="user"}); $("welcome").style.display=has?"none":"block"; $("chips").style.display=has?"none":"flex" }
+function renderChatList(){
+  var list=$("chatList"); list.innerHTML="";
+  if(!chats.length){ list.innerHTML='<div class="chat-empty">No chats yet — tap New chat.</div>'; return }
+  chats.forEach(function(c){
+    var item=document.createElement("div"); item.className="chat-item"+(c===currentChat?" active":"");
+    var t=document.createElement("button"); t.className="t"; t.type="button"; t.textContent=c.title; t.title=c.title;
+    t.addEventListener("click",function(){ switchChat(c); closeSide() });
+    var del=document.createElement("button"); del.className="del"; del.type="button"; del.title="Delete chat"; del.setAttribute("aria-label","Delete chat"); del.innerHTML=ICO_TRASH;
+    del.addEventListener("click",function(ev){ ev.stopPropagation(); deleteChat(c) });
+    item.appendChild(t); item.appendChild(del); list.appendChild(item);
+  });
+}
+function newChat(){
+  if(typeof liveMode!=="undefined"&&liveMode)stopLive();
+  stopSpeaking(); busy=false; typing.style.display="none";
+  var c={id:nextChatId++, title:"New chat", msgs:[], hist:[]};
+  chats.unshift(c); currentChat=c; history=c.hist;
+  clearPendingImg(); input.value=""; autoGrow();
+  renderLog(); renderChatList();
+}
+function switchChat(c){
+  if(c===currentChat)return;
+  if(typeof liveMode!=="undefined"&&liveMode)stopLive();
+  stopSpeaking(); busy=false; typing.style.display="none";
+  currentChat=c; history=c.hist; clearPendingImg();
+  renderLog(); renderChatList();
+}
+function deleteChat(c){
+  var i=chats.indexOf(c); if(i>-1)chats.splice(i,1);
+  if(c===currentChat){ if(chats.length){ currentChat=chats[0]; history=currentChat.hist } else { var nc={id:nextChatId++, title:"New chat", msgs:[], hist:[]}; chats.unshift(nc); currentChat=nc; history=nc.hist } renderLog() }
+  renderChatList();
+}
+$("newChatBtn").addEventListener("click",function(){ newChat(); closeSide(); input.focus() });
+
+/* ---------- Export chat ---------- */
+$("exportBtn").addEventListener("click",function(){
+  closeSide();
+  if(!currentChat||!currentChat.msgs.length){ toast("Nothing to export yet — say something first!"); return }
+  var lines=["Chat with Mili — "+currentChat.title,"Exported "+new Date().toLocaleString("en-IN"),""];
+  currentChat.msgs.forEach(function(m){ if(m.cls==="user")lines.push("You: "+m.text); else if(m.cls==="char")lines.push("Mili: "+m.text); else lines.push("— "+m.text+" —") });
+  var blob=new Blob([lines.join("\n")],{type:"text/plain"});
+  var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="mili-chat.txt"; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ try{URL.revokeObjectURL(a.href)}catch(e){} },3000);
+  toast("Chat downloaded as a text file");
+});
+
+/* ---------- Photo attach (Gemini vision) ---------- */
+function clearPendingImg(){ pendingImg=null; $("attChip").classList.remove("on"); $("fileInput").value="" }
+$("attachBtn").addEventListener("click",function(){ $("fileInput").click() });
+$("attRemove").addEventListener("click",clearPendingImg);
+$("fileInput").addEventListener("change",function(){
+  var f=this.files&&this.files[0]; if(!f)return;
+  if(f.type.indexOf("image/")!==0){ toast("Please pick an image file"); return }
+  var rd=new FileReader();
+  rd.onload=function(){
+    var url=String(rd.result||""); var comma=url.indexOf(",");
+    if(comma<0){ toast("Could not read that photo — try another one"); return }
+    pendingImg={mime:f.type||"image/jpeg", data:url.slice(comma+1), url:url};
+    $("attThumb").src=url; $("attName").textContent=f.name||"Photo attached";
+    $("attChip").classList.add("on"); input.focus();
+  };
+  rd.onerror=function(){ toast("Could not read that photo — try another one") };
+  rd.readAsDataURL(f);
+});
+
+/* ---------- Chat flow ---------- */
+function charReply(text){ typing.style.display="none"; addMsg("char",text); speechText.textContent=text; setMood(guessMood(text)); speak(text) }
+function regenerate(){
+  if(busy||!currentChat)return;
+  var msgs=currentChat.msgs, lastUserText=null;
+  for(var i=msgs.length-1;i>=0;i--){ if(msgs[i].cls==="user"){ lastUserText=msgs[i].text; break } }
+  if(!lastUserText){ toast("Nothing to regenerate yet"); return }
+  stopSpeaking();
+  while(msgs.length&&msgs[msgs.length-1].cls!=="user")msgs.pop();
+  if(history.length>=2){ history.pop(); history.pop() }
+  renderLog(); renderChatList();
+  busy=true; setMood("think"); typing.style.display="block"; scrollDown();
+  var finish=function(r){ history.push({role:"user",text:lastUserText}); history.push({role:"model",text:r}); if(history.length>14)history=history.slice(-14); charReply(r); busy=false };
+  if(geminiKey){ geminiReply(lastUserText).then(finish).catch(function(err){ addMsg("sys","Gemini didn't respond — "+((err&&err.message)||"check connection")+" Answering with my built-in brain instead."); finish(demoBrain(lastUserText)) }) }
+  else { setTimeout(function(){ finish(demoBrain(lastUserText)) },400) }
+}
+function send(text){
+  var q=(text||"").trim(); if(busy)return;
+  var img=pendingImg;
+  if(!q&&img)q="What do you see in this photo? Describe it for me.";
+  if(!q)return;
+  busy=true; clearPendingImg();
+  addMsg("user",q,img?img.url:null);
+  input.value=""; autoGrow(); setMood("think"); typing.style.display="block"; scrollDown();
+  var finish=function(r){ history.push({role:"user",text:q}); history.push({role:"model",text:r}); if(history.length>14)history=history.slice(-14); charReply(r); busy=false };
+  if(img&&!geminiKey){
+    addMsg("sys","I can only look at photos with my Gemini brain — connect the free key in Settings, then send the photo again. Answering your words with my built-in brain for now.");
+    setTimeout(function(){ finish(demoBrain(q)) },500);
+  } else if(geminiKey){
+    geminiReply(q,img).then(finish).catch(function(err){ addMsg("sys","Gemini didn't respond — "+((err&&err.message)||"check connection")+" Answering with my built-in brain instead."); finish(demoBrain(q)) });
+  } else { setTimeout(function(){ finish(demoBrain(q)) },600) }
+}
+function autoGrow(){ input.style.height="auto"; input.style.height=Math.min(input.scrollHeight,120)+"px" }
+input.addEventListener("input",autoGrow);
+input.addEventListener("keydown",function(e){ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); send(input.value) } });
+form.addEventListener("submit",function(e){ e.preventDefault(); send(input.value) });
+document.querySelectorAll(".chips button").forEach(function(b){ b.addEventListener("click",function(){ send(b.getAttribute("data-q")) }) });
 
 /* One-tap mic */
 var Recog=window.SpeechRecognition||window.webkitSpeechRecognition, recog=null, listening=false;
-if(Recog){ recog=new Recog(); recog.interimResults=false; recog.onresult=function(ev){send(ev.results[0][0].transcript)}; recog.onend=function(){listening=false; micBtn.classList.remove("listening"); micBtn.textContent="🎤"}; recog.onerror=recog.onend;
- micBtn.addEventListener("click",function(){ if(listening){recog.stop();return} stopSpeaking(); recog.lang=langSel.value; try{recog.start(); listening=true; micBtn.classList.add("listening"); micBtn.textContent="⏹️"}catch(e){} });
-} else { micBtn.addEventListener("click",function(){addMsg("sys","Mic needs Chrome on this phone — typing works perfectly until then!")}) }
+if(Recog){ recog=new Recog(); recog.interimResults=false; recog.onresult=function(ev){ send(ev.results[0][0].transcript) }; recog.onend=function(){ listening=false; micBtn.classList.remove("listening") }; recog.onerror=recog.onend;
+ micBtn.addEventListener("click",function(){ if(listening){ recog.stop(); return } stopSpeaking(); recog.lang=langSel.value; try{ recog.start(); listening=true; micBtn.classList.add("listening") }catch(e){} });
+} else { micBtn.addEventListener("click",function(){ addMsg("sys","Mic needs Chrome on this phone — typing works perfectly until then!") }) }
 
-/* LIVE TALK v2 — SIMPLE: single-shot recognition + auto re-listen, camera optional */
+/* LIVE TALK v2 — single-shot recognition + auto re-listen, camera optional */
 var liveMode=false, liveStream=null, liveRecog=null, liveListening=false, liveCtx=null, liveMeterTimer=null, livePoll=null, noSpeechCount=0;
 var liveDock=$("liveDock"), liveBtn=$("liveBtn"), liveStatus=$("liveStatus"), liveHeard=$("liveHeard"), camVideo=$("camVideo"), camWrap=$("camWrap"), liveOrb=$("liveOrb");
-function liveSay(h){liveStatus.innerHTML=h}
-function startMeter(stream){ try{var AC=window.AudioContext||window.webkitAudioContext; if(!AC||!stream.getAudioTracks().length)return; liveCtx=new AC(); var src=liveCtx.createMediaStreamSource(stream), an=liveCtx.createAnalyser(); an.fftSize=256; src.connect(an); var bars=document.querySelectorAll("#meter i"), data=new Uint8Array(an.frequencyBinCount); liveMeterTimer=setInterval(function(){an.getByteFrequencyData(data); var avg=0; for(var i=0;i<data.length;i++)avg+=data[i]; avg/=data.length; bars.forEach(function(b,i){var on=avg/255*bars.length; b.style.height=(i<on?7+Math.random()*16:5)+"px"; b.style.opacity=i<on?"1":".3"})},120)}catch(e){} }
+function liveSay(h){ liveStatus.innerHTML=h }
+function startMeter(stream){ try{ var AC=window.AudioContext||window.webkitAudioContext; if(!AC||!stream.getAudioTracks().length)return; liveCtx=new AC(); var src=liveCtx.createMediaStreamSource(stream), an=liveCtx.createAnalyser(); an.fftSize=256; src.connect(an); var bars=document.querySelectorAll("#meter i"), data=new Uint8Array(an.frequencyBinCount); liveMeterTimer=setInterval(function(){ an.getByteFrequencyData(data); var avg=0; for(var i=0;i<data.length;i++)avg+=data[i]; avg/=data.length; bars.forEach(function(b,i){ var on=avg/255*bars.length; b.style.height=(i<on?7+Math.random()*16:5)+"px"; b.style.opacity=i<on?"1":".3" }) },120) }catch(e){} }
 function setupRecog(){ var R=window.SpeechRecognition||window.webkitSpeechRecognition; if(!R)return false; liveRecog=new R(); liveRecog.continuous=false; liveRecog.interimResults=true;
   liveRecog.onresult=function(ev){ var fin="",inter=""; for(var i=ev.resultIndex;i<ev.results.length;i++){ if(ev.results[i].isFinal)fin+=ev.results[i][0].transcript; else inter+=ev.results[i][0].transcript } if(inter)liveHeard.innerHTML="<b>You:</b> "+escapeHtml(inter)+"…"; fin=fin.trim(); if(fin){ noSpeechCount=0; liveHeard.innerHTML="<b>You said:</b> “"+escapeHtml(fin)+"”"; liveListening=false; liveSay("💭 <b>Mili is thinking…</b>"); send(fin) } };
-  liveRecog.onend=function(){liveListening=false};
-  liveRecog.onerror=function(ev){ liveListening=false; if(ev.error==="not-allowed"){liveSay("⚠️ <b>Mic blocked.</b> Tap the lock icon in Chrome → allow Microphone → start again."); stopLive()} else if(ev.error==="no-speech"){ noSpeechCount++; if(liveMode&&noSpeechCount>=4){liveSay("🟢 <b>Still live — just quiet.</b> Speak whenever you're ready, Mili is listening in loops."); noSpeechCount=0} } };
+  liveRecog.onend=function(){ liveListening=false };
+  liveRecog.onerror=function(ev){ liveListening=false; if(ev.error==="not-allowed"){ liveSay("⚠️ <b>Mic blocked.</b> Tap the lock icon in Chrome → allow Microphone → start again."); stopLive() } else if(ev.error==="no-speech"){ noSpeechCount++; if(liveMode&&noSpeechCount>=4){ liveSay("🟢 <b>Still live — just quiet.</b> Speak whenever you're ready, Mili is listening in loops."); noSpeechCount=0 } } };
   return true }
-function escapeHtml(s){var d=document.createElement("div"); d.textContent=s; return d.innerHTML}
-function liveListen(){ if(!liveMode||liveListening||busy||speaking||!liveRecog)return; try{liveRecog.lang=langSel.value; liveRecog.start(); liveListening=true; liveOrb.textContent="👂"; liveSay("🟢 <b>Listening…</b> Speak one short sentence, then pause.")}catch(e){} }
+function escapeHtml(s){ var d=document.createElement("div"); d.textContent=s; return d.innerHTML }
+function liveListen(){ if(!liveMode||liveListening||busy||speaking||!liveRecog)return; try{ liveRecog.lang=langSel.value; liveRecog.start(); liveListening=true; liveOrb.textContent="👂"; liveSay("🟢 <b>Listening…</b> Speak one short sentence, then pause.") }catch(e){} }
 function startLive(){
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ liveSay("⚠️ This browser can't open the mic. Please open this page in <b>Chrome</b>."); return }
   var wantCam=$("optCamera").checked; liveBtn.disabled=true; liveSay("⏳ Asking permission — tap <b>Allow</b> for the microphone"+(wantCam?" and camera":"")+"…");
   var constraints= wantCam ? {video:{facingMode:"user"},audio:{echoCancellation:true,noiseSuppression:true}} : {audio:{echoCancellation:true,noiseSuppression:true}};
   navigator.mediaDevices.getUserMedia(constraints).then(function(stream){ onLive(stream,wantCam) }).catch(function(){
-    if(wantCam){ /* camera failed -> mic-only fallback, clearly explained */
+    if(wantCam){
       navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){ camWrap.style.display="none"; addMsg("sys","Camera didn't open, so Live Talk is running mic-only. That's the part that matters — talk away!"); onLive(s,false) }).catch(denied);
     } else denied();
   });
   function denied(){ liveBtn.disabled=false; liveSay("⚠️ <b>Permission denied.</b> In Chrome: tap the lock/site icon → Permissions → allow Microphone"+(wantCam?" & Camera":"")+" → tap Start again. Typing below always works.") }
 }
 function onLive(stream,hasCam){ liveMode=true; liveStream=stream; liveBtn.disabled=false; liveDock.classList.add("on"); liveBtn.textContent="⏹ Stop Live Talk"; liveBtn.className="btn btn-dark"; liveOrb.textContent="🎙️";
-  if(hasCam){camWrap.style.display="block"; camVideo.srcObject=stream} else camWrap.style.display="none";
+  $("liveQuickBtn").classList.add("live-on");
+  if(hasCam){ camWrap.style.display="block"; camVideo.srcObject=stream } else camWrap.style.display="none";
   startMeter(stream); setMood("surprise");
   if(!setupRecog()){ liveSay("⚠️ Mic is on, but this browser has <b>no speech recognition</b> — Live Talk needs Chrome. You can still type below."); return }
   charReply("We're live, Shivansh! Just talk to me — one short sentence at a time. I'll listen, answer, and listen again, all by myself. Go ahead, say hello!");
   liveSay("🟢 <b>Live is ON.</b> Mili is saying hello — she starts listening right after.");
   if(livePoll)clearInterval(livePoll); livePoll=setInterval(function(){ if(liveMode&&!busy&&!speaking&&!liveListening)liveListen() },650);
 }
-function stopLive(){ liveMode=false; if(livePoll)clearInterval(livePoll); if(liveMeterTimer)clearInterval(liveMeterTimer); livePoll=null; liveMeterTimer=null; if(liveRecog){try{liveRecog.onend=null; liveRecog.stop()}catch(e){} liveRecog=null} liveListening=false; if(liveStream){liveStream.getTracks().forEach(function(t){t.stop()}); liveStream=null} camVideo.srcObject=null; if(liveCtx){try{liveCtx.close()}catch(e){} liveCtx=null} stopSpeaking(); liveDock.classList.remove("on"); liveBtn.textContent="▶ Start Live Talk"; liveBtn.className="btn btn-primary"; liveBtn.disabled=false; liveOrb.textContent="🎤"; liveHeard.innerHTML="<b>Status:</b> Live stopped. Mic"+(camWrap.style.display!=="none"?" and camera are":" is")+" fully off."; liveSay("Live ended — mic and camera are fully off. Tap <b>Start Live Talk</b> anytime, or just type below."); setMood("idle") }
+function stopLive(){ liveMode=false; if(livePoll)clearInterval(livePoll); if(liveMeterTimer)clearInterval(liveMeterTimer); livePoll=null; liveMeterTimer=null; if(liveRecog){ try{ liveRecog.onend=null; liveRecog.stop() }catch(e){} liveRecog=null } liveListening=false; if(liveStream){ liveStream.getTracks().forEach(function(t){ t.stop() }); liveStream=null } camVideo.srcObject=null; if(liveCtx){ try{ liveCtx.close() }catch(e){} liveCtx=null } stopSpeaking(); liveDock.classList.remove("on"); liveBtn.textContent="▶ Start Live Talk"; liveBtn.className="btn btn-primary"; liveBtn.disabled=false; liveOrb.textContent="🎤"; $("liveQuickBtn").classList.remove("live-on"); liveHeard.innerHTML="<b>Status:</b> Live stopped. Mic"+(camWrap.style.display!=="none"?" and camera are":" is")+" fully off."; liveSay("Live ended — mic and camera are fully off. Tap <b>Start Live Talk</b> anytime, or just type below."); setMood("idle") }
 liveBtn.addEventListener("click",function(){ liveMode?stopLive():startLive() });
-document.addEventListener("visibilitychange",function(){if(document.hidden&&liveMode)stopLive()}); window.addEventListener("pagehide",function(){if(liveMode)stopLive()});
+$("liveQuickBtn").addEventListener("click",function(){
+  if(liveMode){ stopLive(); return }
+  var st=$("stage"); if(st.classList.contains("closed")){ st.classList.remove("closed"); $("stageToggle").textContent="Hide Mili & Live Talk" }
+  startLive();
+});
+document.addEventListener("visibilitychange",function(){ if(document.hidden&&liveMode)stopLive() }); window.addEventListener("pagehide",function(){ if(liveMode)stopLive() });
 
 /* Brain state — Gemini primary, demo fallback */
 var keyMsg=$("keyMsg");
 function updateBrainState(){
-  if(geminiKey){ brainPill.className="pill"; brainPill.style.background="var(--teal-bg)"; brainPill.style.color="var(--teal)"; brainTxt.textContent="Gemini Brain Connected"; }
-  else { brainPill.className="pill demo"; brainPill.style.background=""; brainPill.style.color=""; brainTxt.textContent="Smarter Demo Brain"; }
+  if(geminiKey){ brainPill.className="pill"; brainPill.style.background="var(--teal-bg)"; brainPill.style.color="var(--teal)"; brainTxt.textContent="Gemini Connected"; }
+  else { brainPill.className="pill demo"; brainPill.style.background=""; brainPill.style.color=""; brainTxt.textContent="Demo Brain"; }
 }
-function setBrain(on){ updateBrainState() }
 
 /* Gemini connect */
 $("connectBtn").addEventListener("click",function(){
   var raw=$("apiKey").value||"";
   var k=raw.replace(/\s+/g,"").replace(/^["']+|["']+$/g,"");
-  if(!k){keyMsg.className="msg2 err"; keyMsg.textContent="Paste your key first!"; return}
-  if(k.indexOf("AIza")!==0||k.length<30){keyMsg.className="msg2 err"; keyMsg.textContent="⚠️ That doesn't look like a full Gemini key — it should start with AIza and be one long line. Copy it again from AI Studio (tap the copy icon next to the key) and paste the whole thing."; return}
+  if(!k){ keyMsg.className="msg2 err"; keyMsg.textContent="Paste your key first!"; return }
+  if(k.indexOf("AIza")!==0||k.length<30){ keyMsg.className="msg2 err"; keyMsg.textContent="⚠️ That doesn't look like a full Gemini key — it should start with AIza and be one long line. Copy it again from AI Studio (tap the copy icon next to the key) and paste the whole thing."; return }
   if(k!==raw.trim())$("apiKey").value=k;
   var btn=$("connectBtn"); btn.disabled=true; btn.textContent="Testing your key…";
   keyMsg.className="msg2"; keyMsg.textContent="Testing your key with Google… (trying current Gemini models)";
@@ -483,7 +774,7 @@ $("connectBtn").addEventListener("click",function(){
   geminiReply("Say one short friendly hello line.").then(function(){
     btn.disabled=false; btn.textContent="Connect Gemini";
     updateBrainState(); keyMsg.className="msg2 ok";
-    keyMsg.textContent="✅ Connected! Gemini is working ("+(geminiModelUsed||"flash")+"). Now ask Mili anything at all."; charReply("My real brain is connected now! Ask me anything — I'll think up the answer myself, and remember our chat.");
+    keyMsg.textContent="✅ Connected! Gemini is working ("+(geminiModelUsed||"flash")+"). Now ask Mili anything at all — or attach a photo and ask about it."; charReply("My real brain is connected now! Ask me anything — I'll think up the answer myself, remember our chat, and I can even look at photos you attach.");
   }).catch(function(err){
     btn.disabled=false; btn.textContent="Connect Gemini";
     var code=err&&err.code, label=(err&&err.message)||"";
@@ -492,13 +783,18 @@ $("connectBtn").addEventListener("click",function(){
     else { keyMsg.className="msg2 err"; keyMsg.textContent="⚠️ Couldn't connect right now — this is NOT necessarily your key. "+(label||"Check your internet and tap Connect again."); }
   });
 });
-$("disconnectBtn").addEventListener("click",function(){geminiKey=""; history=[]; $("apiKey").value=""; updateBrainState(); keyMsg.className="msg2 ok"; keyMsg.textContent="Back to the built-in brain."});
+$("disconnectBtn").addEventListener("click",function(){ geminiKey=""; if(currentChat)currentChat.hist=[]; history=currentChat?currentChat.hist:[]; $("apiKey").value=""; updateBrainState(); keyMsg.className="msg2 ok"; keyMsg.textContent="Back to the built-in brain." });
 
 /* Tap Mili */
 var wrap=$("avatarWrap"); var lines=["Hee hee! Hi hi! ✨","That tickles! 💖","Waving back at you! 👋","So happy you're here! 💗","Sparkles, just for you! ✨"]; var pops=["💖","✨","💗","⭐","🌸"];
-function tap(){ speechText.textContent=pick(lines); setMood("happy"); avatar.classList.add("waving"); for(var i=0;i<5;i++){var s=document.createElement("span"); s.className="pop"; s.textContent=pops[i%5]; s.style.left=(20+Math.random()*60)+"%"; s.style.animationDelay=(i*.07)+"s"; wrap.appendChild(s); (function(el){setTimeout(function(){el.remove()},1500)})(s)} setTimeout(function(){avatar.classList.remove("waving")},1400) }
-avatar.addEventListener("click",tap); avatar.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault(); tap()}});
-updatePill(); setMood("idle");
+function tap(){ speechText.textContent=pick(lines); setMood("happy"); avatar.classList.add("waving"); for(var i=0;i<5;i++){ var s=document.createElement("span"); s.className="pop"; s.textContent=pops[i%5]; s.style.left=(20+Math.random()*60)+"%"; s.style.animationDelay=(i*.07)+"s"; wrap.appendChild(s); (function(el){ setTimeout(function(){ el.remove() },1500) })(s) } setTimeout(function(){ avatar.classList.remove("waving") },1400) }
+avatar.addEventListener("click",tap); avatar.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); tap() } });
+
+/* Init */
+var first={id:nextChatId++, title:"New chat", msgs:[], hist:[]};
+chats.push(first); currentChat=first; history=first.hist;
+addMsg("char","Hi Shivansh! 🙏 Welcome to my new AI-style home. My voice is a real neural voice (SpeechSter) — warm and human, not robotic. Turn Voice ON in Settings, tap Hear a preview, then chat with me. You can also attach a photo and ask me about it!");
+updatePill(); updateBrainState(); setMood("idle"); renderChatList(); syncWelcome();
 })();
 </script>
 </body>
