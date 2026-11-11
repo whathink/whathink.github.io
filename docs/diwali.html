@@ -1,0 +1,91 @@
+<!-- Diwali 2026 interactive greeting -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Diwali 🪔</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0208; color: #ffd700; font-family: Georgia, serif; min-height: 100vh; overflow-x: hidden; text-align: center; }
+  #fw { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+  .wrap { position: relative; z-index: 2; padding: 40px 16px 30px; }
+  h1 { font-size: clamp(42px, 10vw, 84px); color: #ffb700; text-shadow: 0 0 24px #ff8800, 0 0 60px #ff5500; letter-spacing: 2px; }
+  h2 { font-size: clamp(26px, 6vw, 44px); color: #ffdf80; margin-top: 6px; text-shadow: 0 0 16px #ff8800; }
+  p.sub { color: #f5e6c8; margin: 14px 0 26px; font-size: 17px; }
+  .diyas { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 10px 0 6px; }
+  .diya { font-size: clamp(44px, 11vw, 72px); cursor: pointer; background: none; border: none; filter: grayscale(1) brightness(0.45); transition: transform .2s, filter .3s; line-height: 1.2; }
+  .diya.lit { filter: none; transform: scale(1.12); text-shadow: 0 0 30px #ffaa00, 0 0 60px #ff6600; }
+  .diya:active { transform: scale(0.94); }
+  #count { color: #ffe9a8; font-size: 18px; margin: 10px 0 20px; min-height: 24px; }
+  .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  button.act { background: linear-gradient(135deg, #ff9d00, #ff5500); color: #fff; border: none; border-radius: 999px; padding: 13px 26px; font-size: 17px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 18px rgba(255,110,0,.5); }
+  button.act.ghost { background: transparent; border: 2px solid #ffb700; color: #ffb700; box-shadow: none; }
+  .hint { color: #c9a86a; font-size: 14px; margin-top: 26px; }
+  .foot { color: #8a6d3b; font-size: 13px; margin-top: 30px; }
+</style>
+</head>
+<body>
+<canvas id="fw"></canvas>
+<div class="wrap">
+  <h1>Happy Diwali</h1>
+  <h2>शुभ दीपावली</h2>
+  <p class="sub">Tap a diya to light it &mdash; tap anywhere for fireworks!</p>
+  <div class="diyas" id="diyas"></div>
+  <div id="count">0 / 7 diye jal rahe hain</div>
+  <div class="btns">
+    <button class="act" id="lightAll">🪔 Sab Diye Jalao</button>
+    <button class="act ghost" id="reset">Reset</button>
+  </div>
+  <p class="hint">Click anywhere on the screen to burst fireworks 🎆</p>
+  <p class="foot">Made with ❤️ — Happy Diwali 2026</p>
+</div>
+<script>
+  const box = document.getElementById("diyas");
+  const countEl = document.getElementById("count");
+  const N = 7;
+  for (let i = 0; i < N; i++) {
+    const b = document.createElement("button");
+    b.className = "diya"; b.textContent = "🪔"; b.setAttribute("aria-label", "diya " + (i + 1));
+    b.onclick = (e) => { e.stopPropagation(); b.classList.toggle("lit"); update(); };
+    box.appendChild(b);
+  }
+  function litCount() { return document.querySelectorAll(".diya.lit").length; }
+  function update() {
+    const n = litCount();
+    countEl.textContent = n === N ? "🎉 Saare diye jal gaye! Happy Diwali!" : n + " / " + N + " diye jal rahe hain";
+    if (n === N) burst(innerWidth / 2, innerHeight / 3);
+  }
+  document.getElementById("lightAll").onclick = (e) => { e.stopPropagation(); document.querySelectorAll(".diya").forEach(d => d.classList.add("lit")); update(); };
+  document.getElementById("reset").onclick = (e) => { e.stopPropagation(); document.querySelectorAll(".diya").forEach(d => d.classList.remove("lit")); update(); };
+  const cv = document.getElementById("fw"), ctx = cv.getContext("2d");
+  function size() { cv.width = innerWidth; cv.height = innerHeight; }
+  size(); addEventListener("resize", size);
+  const parts = [];
+  const colors = ["#ffdd33", "#ff8800", "#ff5599", "#66ccff", "#99ff66", "#ff4444"];
+  function burst(x, y) {
+    const c = colors[Math.floor(Math.random() * colors.length)];
+    for (let i = 0; i < 70; i++) {
+      const a = Math.random() * Math.PI * 2, s = 1 + Math.random() * 6;
+      parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 1, c });
+    }
+  }
+  addEventListener("pointerdown", (e) => { if (e.target.closest("button")) return; burst(e.clientX, e.clientY); });
+  setInterval(() => { if (document.visibilityState === "visible") burst(80 + Math.random() * (innerWidth - 160), 80 + Math.random() * innerHeight * 0.4); }, 2600);
+  (function loop() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.06; p.vx *= 0.985; p.vy *= 0.985; p.life -= 0.012;
+      if (p.life <= 0) { parts.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.max(p.life, 0);
+      ctx.fillStyle = p.c;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 2.4, 0, 7); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  })();
+  update();
+</script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="color-scheme" content="light dark"/>
+<link rel="icon" href="data:,"/>
+<title>Mili — Talking Character</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF8F1; --bg2:#FFF1E6; --card:#FFFFFF; --ink:#2D2220; --muted:#7A6E67;
+  --line:#F0DDD0; --coral:#FF5A5F; --coral-d:#E8464C; --peach:#FFB59E; --pink:#FFD6E0;
+  --teal:#0F766E; --teal-bg:#E6F4F1; --gold:#E9A426; --bubble:#FFF4EC; --shadow:0 12px 32px rgba(120,60,20,.10);
+  --r:20px;
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#1A1512;--bg2:#241C17;--card:#2A211C;--ink:#FFF3E8;--muted:#C4B2A6;--line:#3E332B;--bubble:#33271F;--teal-bg:#17332E;--shadow:0 12px 32px rgba(0,0,0,.5)}
+}
+*{box-sizing:border-box} html,body{margin:0} body{font-family:"Nunito",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+button,input,select{font:inherit;min-height:44px} button{cursor:pointer}
+.wrap{max-width:880px;margin:0 auto;padding:14px 14px 36px}
+
+/* STAGE */
+.stage{background:linear-gradient(180deg,var(--bg2),var(--card));border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:18px 16px 16px;overflow:hidden;position:relative}
+.topbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start}
+.brand h1{font-family:"Quicksand",sans-serif;font-size:28px;line-height:1;margin:2px 0 4px;letter-spacing:-.02em}
+.brand h1 span{color:var(--coral)} .brand p{margin:0;color:var(--muted);font-size:.92rem;font-weight:700;max-width:420px}
+.pills{display:flex;gap:7px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:800;padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+.pill.voice-on{background:#FFE8E9;color:#B4232A;border-color:#FFC9CC} .pill.demo{background:#FFF3D6;color:#8A5A00}
+.dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+
+.hero{display:grid;grid-template-columns:1fr;gap:6px;justify-items:center;text-align:center;margin-top:8px}
+@media(min-width:680px){.hero{grid-template-columns:300px 1fr;text-align:left;justify-items:stretch;align-items:center} .speech-col{align-self:center}}
+.avatar-wrap{position:relative;display:flex;justify-content:center}
+.avatar{width:min(272px,68vw);cursor:pointer;-webkit-tap-highlight-color:transparent;animation:bob 4s ease-in-out infinite;transform-origin:50% 90%}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.avatar.talking{animation:bobTalk .7s ease-in-out infinite}@keyframes bobTalk{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.01)}}
+.float{position:absolute;pointer-events:none;animation:floaty 3.6s ease-in-out infinite;font-size:18px}@keyframes floaty{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-9px) rotate(7deg)}}
+.pop{position:absolute;bottom:38%;pointer-events:none;animation:popUp 1s ease-out forwards;font-size:20px}@keyframes popUp{0%{opacity:0;transform:translateY(8px) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translateY(-78px) scale(1.2)}}
+#waveArm{transform-box:fill-box;transform-origin:15% 90%} .avatar.waving #waveArm{animation:wave .34s ease-in-out 4}@keyframes wave{0%,100%{transform:rotate(0)}50%{transform:rotate(-26deg)}}
+.headTilt{transform-origin:140px 160px;animation:tilt 6s ease-in-out infinite}@keyframes tilt{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
+@media(prefers-reduced-motion:reduce){.avatar,.float,.headTilt,.avatar.waving #waveArm{animation:none}}
+
+.speech{background:var(--bubble);border:1px solid var(--line);border-radius:18px;padding:14px 16px;position:relative}
+.speech b{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:4px}
+.speech p{margin:0;font-size:1.05rem;line-height:1.5;font-weight:700}
+.quick-feats{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;justify-content:center}@media(min-width:680px){.quick-feats{justify-content:flex-start}}
+.quick-feats span{font-size:.78rem;font-weight:800;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 10px}
+
+/* LIVE - SIMPLIFIED */
+.live{margin-top:16px;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:14px}
+.live.on{border-color:var(--coral);box-shadow:0 0 0 4px rgba(255,90,95,.14)}
+.live-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.live-head strong{font-size:1rem;display:flex;gap:8px;align-items:center}
+.orb{width:36px;height:36px;border-radius:50%;background:var(--teal-bg);display:grid;place-items:center;font-size:18px;flex:none}
+.live.on .orb{background:#FFE1E2;animation:pulseOrb 1.3s infinite}@keyframes pulseOrb{0%,100%{box-shadow:0 0 0 0 rgba(255,90,95,.35)}50%{box-shadow:0 0 0 9px rgba(255,90,95,0)}}
+.live-status{font-size:.9rem;color:var(--muted);margin-top:8px;min-height:24px}.live-status b{color:var(--ink)}
+.btn{border:none;border-radius:12px;font-weight:900;padding:11px 16px;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn-primary{background:var(--coral);color:#fff}.btn-primary:active{background:var(--coral-d)} .btn-dark{background:var(--ink);color:var(--bg)} .btn-teal{background:var(--teal);color:#fff;width:100%} .btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink);width:100%}
+.live-body{display:none;margin-top:12px;gap:14px}@media(min-width:560px){.live-body{grid-template-columns:168px 1fr}} .live.on .live-body{display:grid}
+.cam{position:relative}.cam video{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;background:#111;transform:scaleX(-1);border:2px solid var(--line);display:block}
+.cam-tag{position:absolute;left:7px;bottom:7px;background:rgba(0,0,0,.7);color:#fff;font-size:.68rem;font-weight:900;padding:4px 8px;border-radius:999px;letter-spacing:.04em}
+.meter{display:flex;gap:3px;align-items:flex-end;height:26px;margin:10px 0}.meter i{flex:1;height:5px;border-radius:99px;background:var(--teal);transition:height .1s;opacity:.35}
+.heard-box{background:var(--bg);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;font-size:.92rem;min-height:52px}.heard-box b{color:var(--teal)}
+.mode-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.mode-row label{flex:1;min-width:140px;display:flex;gap:8px;align-items:center;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font-weight:800;font-size:.88rem;cursor:pointer}.mode-row input{width:20px;height:20px;accent-color:var(--coral)}
+
+/* CHAT */
+.chat{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.chat-head{padding:13px 14px 0;display:flex;justify-content:space-between;align-items:center}.chat-head strong{font-size:1rem}.chat-head span{font-size:.8rem;color:var(--muted);font-weight:700}
+.log{max-height:360px;overflow:auto;padding:12px 14px;display:flex;flex-direction:column;gap:9px}
+.msg{max-width:84%;padding:10px 13px;border-radius:16px;font-size:.97rem;white-space:pre-wrap;word-wrap:break-word;line-height:1.5}
+.msg.user{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:5px}
+.msg.char{align-self:flex-start;background:var(--bubble);border:1px solid var(--line);border-bottom-left-radius:5px}
+.msg.sys{align-self:center;text-align:center;background:transparent;color:var(--muted);font-size:.84rem;max-width:96%}
+.typing{display:none;align-self:flex-start;padding:11px 14px;background:var(--bubble);border:1px solid var(--line);border-radius:16px}.typing i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--coral);margin-right:4px;animation:td 1s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s;margin:0}@keyframes td{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+.composer{border-top:1px solid var(--line);padding:12px}
+.row{display:flex;gap:8px}.row input[type=text]{flex:1;min-width:0;padding:11px 13px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+.btn-send{background:var(--coral);color:#fff}.btn-mic{width:50px;padding:0;background:var(--bg);border:1.5px solid var(--line);font-size:18px}.btn-mic.listening{background:var(--coral);color:#fff;border-color:var(--coral)}
+.hint{font-size:.8rem;color:var(--muted);margin:9px 2px 0}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.chips button{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:8px 13px;font-size:.86rem;font-weight:800;min-height:40px}
+
+/* SETTINGS GRID */
+.grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}@media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}
+.panel h2{margin:0 0 6px;font-size:1.02rem}.panel p{margin:0 0 8px;color:var(--muted);font-size:.9rem}
+.panel label{display:block;font-weight:900;font-size:.86rem;margin:13px 0 5px}
+.panel input[type=password],.panel select{width:100%;padding:11px 12px;border-radius:11px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--coral)}
+.switch{display:flex;gap:10px;align-items:flex-start;font-weight:800;font-size:.92rem;margin-top:12px;cursor:pointer}.switch input{width:22px;height:22px;flex:none;accent-color:var(--teal);margin-top:1px}
+.steps{padding-left:19px;margin:6px 0;color:var(--muted);font-size:.9rem}.steps li{margin-bottom:5px}.steps a,.panel a{color:var(--teal);font-weight:900}
+.note{font-size:.8rem;color:var(--muted);margin-top:9px}.msg2{font-weight:900;font-size:.88rem;min-height:20px;margin-top:9px}.msg2.ok{color:var(--teal)}.msg2.err{color:var(--coral)}
+footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px;padding:0 8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<section class="stage">
+  <div class="topbar">
+    <div class="brand"><h1>Meet <span>Mili</span> ✨</h1><p>Your friendly talking companion. Type, tap, or talk live — she listens, thinks, and replies.</p></div>
+    <div class="pills">
+      <div class="pill" id="voicePill">🔇 Voice OFF</div>
+      <div class="pill demo" id="brainPill"><span class="dot"></span><span id="brainTxt">Smarter Demo Brain</span></div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="avatar-wrap" id="avatarWrap">
+      <span class="float" style="top:6%;left:6%">💗</span><span class="float" style="top:2%;right:8%;animation-delay:.6s">✨</span><span class="float" style="top:42%;right:0;animation-delay:1.1s">🌸</span>
+      <div class="avatar" id="avatar" role="button" tabindex="0" aria-label="Tap Mili" title="Tap Mili">
+      <!-- NEW LOOK: softer chibi, cleaner lines, warmer palette, less clutter -->
+      <svg viewBox="0 0 280 320" width="100%" role="img" aria-label="Mili, cute character with long hair and cat-ear hood">
+        <defs>
+          <linearGradient id="hairG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8B5A34"/><stop offset="100%" stop-color="#5C3A22"/></linearGradient>
+          <linearGradient id="sweaterG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFB8C6"/><stop offset="100%" stop-color="#FF8FAB"/></linearGradient>
+        </defs>
+        <!-- body -->
+        <path d="M78 320 C80 268 102 242 140 242 C178 242 200 268 202 320 Z" fill="url(#sweaterG)"/>
+        <path d="M116 246 L140 264 L164 246 L154 240 L140 252 L126 240 Z" fill="#FFF6F8"/>
+        <path d="M140 282 C133 271 116 276 118 287 C119 296 131 302 140 309 C149 302 161 296 162 287 C164 276 147 271 140 282Z" fill="#fff" opacity=".95"/>
+        <path d="M90 256 C76 268 70 284 72 300" stroke="#FF9EB3" stroke-width="18" fill="none" stroke-linecap="round"/><circle cx="73" cy="303" r="10" fill="#FFE3C2"/>
+        <g id="waveArm"><path d="M190 256 C206 244 214 230 218 214" stroke="#FF9EB3" stroke-width="18" fill="none" stroke-linecap="round"/><circle cx="220" cy="207" r="12" fill="#FFE3C2"/><circle cx="211" cy="197" r="4.5" fill="#FFE3C2"/><circle cx="220" cy="193" r="4.5" fill="#FFE3C2"/><circle cx="229" cy="197" r="4.5" fill="#FFE3C2"/></g>
+        <rect x="128" y="205" width="24" height="40" rx="10" fill="#F0B98A"/>
+        <g class="headTilt">
+          <!-- cat-ear hood puffs - subtle, integrated -->
+          <circle cx="72" cy="58" r="22" fill="url(#hairG)"/><circle cx="208" cy="58" r="22" fill="url(#hairG)"/>
+          <path d="M62 48 L72 28 L84 48 Z" fill="#FFB3C6"/><path d="M196 48 L208 28 L218 48 Z" fill="#FFB3C6"/>
+          <ellipse cx="140" cy="148" rx="92" ry="84" fill="#FFE3C2"/>
+          <path d="M46 128 C40 178 42 216 54 238 L78 238 C68 208 66 166 68 132 Z" fill="url(#hairG)"/>
+          <path d="M234 128 C240 178 238 216 226 238 L202 238 C212 208 214 166 212 132 Z" fill="url(#hairG)"/>
+          <path d="M44 136 C34 62 82 28 140 28 C198 28 246 62 236 136 C230 98 216 78 200 68 C206 86 202 100 195 108 C190 80 172 62 156 58 C160 72 158 84 153 92 C149 70 145 64 140 64 C135 64 131 70 127 92 C122 84 120 72 124 58 C108 62 90 80 85 108 C78 100 74 86 80 68 C64 78 50 98 44 136Z" fill="url(#hairG)"/>
+          <circle cx="96" cy="84" r="17" fill="url(#hairG)"/><circle cx="140" cy="80" r="18" fill="url(#hairG)"/><circle cx="184" cy="84" r="17" fill="url(#hairG)"/>
+          <ellipse id="blushL" cx="92" cy="178" rx="17" ry="9" fill="#FF9E8A" opacity=".65"/><ellipse id="blushR" cx="188" cy="178" rx="17" ry="9" fill="#FF9E8A" opacity=".65"/>
+          <path id="browL" d="M84 120 Q102 111 120 119" stroke="#4A2C1A" stroke-width="5" fill="none" stroke-linecap="round"/><path id="browR" d="M160 119 Q178 111 196 120" stroke="#4A2C1A" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <g id="eyeL"><ellipse cx="102" cy="150" rx="18" ry="24" fill="#fff"/><circle cx="102" cy="154" r="14" fill="#7C3F21"/><circle cx="102" cy="156" r="7.5" fill="#20130B"/><circle cx="96" cy="145" r="5" fill="#fff"/><circle cx="109" cy="162" r="2.6" fill="#fff"/></g>
+          <g id="eyeR"><ellipse cx="178" cy="150" rx="18" ry="24" fill="#fff"/><circle cx="178" cy="154" r="14" fill="#7C3F21"/><circle cx="178" cy="156" r="7.5" fill="#20130B"/><circle cx="172" cy="145" r="5" fill="#fff"/><circle cx="185" cy="162" r="2.6" fill="#fff"/></g>
+          <path d="M84 132 Q78 121 68 118" stroke="#332014" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M196 132 Q202 121 212 118" stroke="#332014" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+          <path id="lidL" d="M84 150 Q102 161 120 150" stroke="#332014" stroke-width="4" fill="none" stroke-linecap="round" opacity="0"/><path id="lidR" d="M160 150 Q178 161 196 150" stroke="#332014" stroke-width="4" fill="none" stroke-linecap="round" opacity="0"/>
+          <path d="M140 166 Q144 173 139 176" stroke="#D98E57" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <path id="mouth" d="M126 192 Q140 203 154 192" stroke="#B33A2B" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+          <path d="M100 48 Q124 38 150 40" stroke="#A67C52" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/>
+          <g transform="translate(196 86)"><ellipse cx="-11" cy="0" rx="13" ry="9" fill="#FF7D9C" transform="rotate(-22)"/><ellipse cx="13" cy="0" rx="13" ry="9" fill="#FF7D9C" transform="rotate(22)"/><circle r="6.5" fill="#E75480"/></g>
+          <path d="M68 94 L71.5 101.5 L79 104.5 L71.5 107.5 L68 115 L64.5 107.5 L57 104.5 L64.5 101.5 Z" fill="#E9A426"/>
+        </g>
+      </svg>
+      </div>
+    </div>
+    <div class="speech-col">
+      <div class="speech"><b>Mili says</b><p id="speechText">Hi Shivansh! Big upgrade — my voice is now a real neural voice, not the phone's robotic one. Turn Voice ON below, tap Hear a preview, and listen!</p></div>
+      <div class="quick-feats"><span>👀 Blinks &amp; reacts</span><span>💬 Smarter replies</span><span>🎙️ Real neural voice</span><span>👆 Tap her to wave</span></div>
+
+      <!-- LIVE: SIMPLER -->
+      <div class="live" id="liveDock">
+        <div class="live-head"><strong><span class="orb" id="liveOrb">🎤</span> Live Talk — Simple Mode</strong><button class="btn btn-primary" id="liveBtn" type="button">▶ Start Live Talk</button></div>
+        <div class="live-status" id="liveStatus">No confusing steps. Tap <b>Start</b>, allow the mic, and just talk. Camera is <b>optional</b> — turn it on only if you want it.</div>
+        <div class="mode-row" role="group" aria-label="Live options">
+          <label><input type="checkbox" id="optCamera"> 📷 Camera ON (preview only)</label>
+          <label><input type="checkbox" id="optVoiceLive" checked> 🔊 Voice reply in Live</label>
+        </div>
+        <div class="live-body">
+          <div class="cam" id="camWrap" style="display:none"><video id="camVideo" autoplay playsinline muted></video><span class="cam-tag">● YOU — PREVIEW ONLY</span></div>
+          <div>
+            <div class="heard-box" id="liveHeard"><b>Status:</b> Waiting to start. Your words will appear here as you speak.</div>
+            <div class="meter" id="meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div style="font-size:.82rem;color:var(--muted)">Tip: Speak one short sentence, pause, and let Mili answer. If she misses you, she will automatically listen again — no need to tap anything.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chat">
+  <div class="chat-head"><strong>💬 Chat with Mili</strong><span>Typing always works — voice is optional</span></div>
+  <div class="log" id="chatLog"><div class="msg char">Hi Shivansh! 🙏 New upgrade: my voice is now a real neural voice (SpeechSter) — warm and human, not robotic. Turn Voice ON in Voice Settings, tap Hear a preview, then chat with me!</div><div class="typing" id="typing"><i></i><i></i><i></i></div></div>
+  <div class="composer">
+    <form class="row" id="chatForm"><input type="text" id="userInput" placeholder="Type a message for Mili…" autocomplete="off" aria-label="Message"/><button class="btn btn-send" type="submit">Send ➤</button><button class="btn btn-mic" id="micBtn" type="button" aria-label="Speak once" title="Tap and speak once">🎤</button></form>
+    <p class="hint">🔇 Voice is OFF by default so you can chat quietly anywhere. Turn it ON in Voice Settings below when you want to hear her.</p>
+    <div class="chips">
+      <button type="button" data-q="Hi Mili, how are you?">👋 Say hello</button>
+      <button type="button" data-q="Tell me a funny joke">😂 Joke</button>
+      <button type="button" data-q="Tell me a short story">📖 Story</button>
+      <button type="button" data-q="I am feeling bored">🥱 I'm bored</button>
+      <button type="button" data-q="Give me a video idea for Mythash">🎬 Mythash idea</button>
+      <button type="button" data-q="Give me a video idea for PaStory">📚 PaStory idea</button>
+      <button type="button" data-q="What can you do?">✨ What can you do?</button>
+      <button type="button" data-q="Motivate me">💪 Motivate me</button>
+    </div>
+  </div>
+</section>
+
+<div class="grid">
+  <section class="panel">
+    <h2>🔊 Voice Settings — Real Neural Voice</h2>
+    <p>Mili now uses <b>SpeechSter (freeapi.pro)</b> — Microsoft Edge neural voices. These sound like a real person, not a robot. <b>Free, no sign-up, no API key.</b> Needs internet. If it is slow or down, Mili automatically falls back to your phone's voice.</p>
+    <label class="switch"><input type="checkbox" id="voiceToggle"><span>Mili's voice ON — off by default for quiet chatting</span></label>
+    <label for="engineSel">Voice engine</label>
+    <select id="engineSel"><option value="neural" selected>Neural voice — SpeechSter (recommended, needs internet)</option><option value="phone">Phone voice only (offline backup)</option></select>
+    <label for="neuralVoiceSel">Mili's neural voice</label>
+    <select id="neuralVoiceSel">
+      <option value="Ava Multilingual" selected>Ava Multilingual — warm, natural (recommended)</option>
+      <option value="Emma Multilingual">Emma Multilingual — soft &amp; friendly</option>
+      <option value="Ana">Ana — young &amp; sweet</option>
+      <option value="Aria">Aria — clear &amp; lively</option>
+      <option value="Jenny">Jenny — friendly &amp; clear</option>
+      <option value="Neerja Expressive">Neerja Expressive — Indian English</option>
+      <option value="Neerja">Neerja — Indian English</option>
+      <option value="Swara">Swara — Hindi (हिन्दी)</option>
+      <option value="Libby">Libby — British English</option>
+      <option value="Sonia">Sonia — British English</option>
+    </select>
+    <label for="voiceSel">Phone backup voice (used only if neural is down)</label>
+    <select id="voiceSel"><option>Loading voices…</option></select>
+    <label for="rateRange">Speaking speed — <span id="rateVal">Natural (0.92×)</span></label>
+    <input type="range" id="rateRange" min="0.78" max="1.08" step="0.02" value="0.92">
+    <label for="pitchRange">Tone — <span id="pitchVal">Warm (1.00)</span></label>
+    <input type="range" id="pitchRange" min="0.85" max="1.15" step="0.02" value="1.00">
+    <button class="btn btn-ghost" id="previewBtn" type="button" style="margin-top:12px">▶ Hear a preview</button>
+    <div class="msg2" id="voiceMsg" role="status"></div>
+    <p class="note">Honest note: to make the neural voice, your message text is sent to freeapi.pro's server. It is a free third-party service, so it can sometimes be slow — the phone-voice fallback covers that. For Hindi replies, pick <b>Swara</b> and set Chat language to Hindi below.</p>
+  </section>
+
+  <section class="panel">
+    <h2>🧠 Real AI Brain — Gemini (Free)</h2>
+    <p>Mili's built-in brain is now much smarter, but for truly fresh answers to <b>any</b> question, connect the free Gemini key. She will remember your chat and reply in her own words.</p>
+    <label for="apiKey">Gemini API Key</label>
+    <input type="password" id="apiKey" placeholder="Starts with AIza…" autocomplete="off">
+    <button class="btn btn-teal" id="connectBtn" type="button" style="margin-top:12px">Connect Gemini</button>
+    <button class="btn btn-ghost" id="disconnectBtn" type="button" style="margin-top:8px">Use Built-in Brain instead</button>
+    <div class="msg2" id="keyMsg" role="status"></div>
+    <ol class="steps"><li>Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li><li>Tap <b>Create API Key</b> — free, no card.</li><li>Paste it above and tap Connect.</li></ol>
+    <p class="note">Key stays only in this page's memory — never saved. Close the page and it is gone.</p>
+    <label for="langSel">Chat language</label>
+    <select id="langSel"><option value="en-IN" selected>English</option><option value="hi-IN">Hindi (हिन्दी)</option></select>
+  </section>
+</div>
+
+<footer>Mili v3 — Real neural voice by SpeechSter (freeapi.pro, Microsoft Edge voices, no key needed) with automatic phone-voice fallback. Plus smarter replies and simple Live Talk. Works best in Chrome.</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id)};
+var chatLog=$("chatLog"),typing=$("typing"),form=$("chatForm"),input=$("userInput"),micBtn=$("micBtn"),speechText=$("speechText");
+var mouth=$("mouth"),eyeL=$("eyeL"),eyeR=$("eyeR"),lidL=$("lidL"),lidR=$("lidR"),browL=$("browL"),browR=$("browR"),blushL=$("blushL"),blushR=$("blushR"),avatar=$("avatar");
+var voiceToggle=$("voiceToggle"),voiceSel=$("voiceSel"),langSel=$("langSel"),voicePill=$("voicePill"),brainPill=$("brainPill"),brainTxt=$("brainTxt");
+var rateRange=$("rateRange"),pitchRange=$("pitchRange"),rateVal=$("rateVal"),pitchVal=$("pitchVal");
+var geminiKey="",history=[],speaking=false,busy=false,mouthTimer=null,lastTopic="";
+
+function updatePill(){ voicePill.textContent = voiceToggle.checked ? "🔊 Voice ON" : "🔇 Voice OFF"; voicePill.className="pill"+(voiceToggle.checked?" voice-on":""); }
+voiceToggle.addEventListener("change",function(){updatePill(); if(!voiceToggle.checked) stopSpeaking();});
+rateRange.addEventListener("input",function(){rateVal.textContent=(+rateRange.value<=0.86?"Slow & calm":+rateRange.value>=1.02?"Lively":"Natural")+" ("+(+rateRange.value).toFixed(2)+"×)";});
+pitchRange.addEventListener("input",function(){pitchVal.textContent=(+pitchRange.value<=0.92?"Deeper":+pitchRange.value>=1.08?"Cheerful":"Warm")+" ("+(+pitchRange.value).toFixed(2)+")";});
+
+/* Avatar */
+var MOUTHS={smile:"M126 192 Q140 203 154 192",big:"M124 190 Q140 210 156 190 Q140 198 124 190 Z",o:"M132 190 Q140 185 148 190 Q149 200 140 202 Q131 200 132 190 Z",open1:"M129 191 Q140 202 151 191 Q140 195 129 191 Z",open2:"M127 190 Q140 207 153 190 Q140 196 127 190 Z",flat:"M128 197 L152 197",sad:"M127 200 Q140 192 153 200"};
+function setMouth(s,f){mouth.setAttribute("d",MOUTHS[s]||MOUTHS.smile); if(f){mouth.setAttribute("fill","#7A2D1A");mouth.setAttribute("stroke","#7A2D1A")}else{mouth.setAttribute("fill","none");mouth.setAttribute("stroke","#B33A2B")}}
+function setMood(m){ if(m==="surprise"){browL.setAttribute("d","M84 112 Q102 103 120 111");browR.setAttribute("d","M160 111 Q178 103 196 112");blushL.setAttribute("opacity",".35");blushR.setAttribute("opacity",".35");if(!speaking)setMouth("o",true)} else if(m==="think"){browL.setAttribute("d","M84 116 Q102 114 120 121");browR.setAttribute("d","M160 121 Q178 114 196 116");if(!speaking)setMouth("flat")} else if(m==="sad"){browL.setAttribute("d","M84 114 Q102 120 120 123");browR.setAttribute("d","M160 123 Q178 120 196 114");blushL.setAttribute("opacity",".3");blushR.setAttribute("opacity",".3");if(!speaking)setMouth("sad")} else {browL.setAttribute("d","M84 120 Q102 111 120 119");browR.setAttribute("d","M160 119 Q178 111 196 120");blushL.setAttribute("opacity",".65");blushR.setAttribute("opacity",".65");if(!speaking)setMouth("smile")} }
+function blink(){eyeL.setAttribute("opacity","0");eyeR.setAttribute("opacity","0");lidL.setAttribute("opacity","1");lidR.setAttribute("opacity","1");setTimeout(function(){eyeL.setAttribute("opacity","1");eyeR.setAttribute("opacity","1");lidL.setAttribute("opacity","0");lidR.setAttribute("opacity","0")},140)}
+(function loop(){setTimeout(function(){blink();loop()},2300+Math.random()*2600)})();
+
+/* VOICE ENGINE v2 — slower, warmer, clause-by-clause */
+var NOVELTY=/(fred|albert|bad news|bells|boing|bubbles|cellos|deranged|good news|hysterical|pipe organ|trinoids|whisper|zarvox|jester|superstar|grandma|grandpa|rocko|eddy|flo|reed|sandy|shelley)/i;
+function scoreVoice(v,lang){var n=(v.name||"").toLowerCase(),s=0,w=(lang||"en-IN").toLowerCase(),vl=(v.lang||"").toLowerCase().replace(/_/g,"-"); if(vl===w)s+=45; else if(vl.indexOf(w.slice(0,2))===0)s+=24; if(/natural|neural|premium|enhanced/.test(n))s+=32; if(n.indexOf("google")===0)s+=20; if(/neerja|veena|heera|swara|lekha|aria|jenny|samantha/.test(n))s+=18; if(/microsoft/.test(n))s+=8; if(/compact|eloquence|espeak/.test(n))s-=28; if(NOVELTY.test(n))s-=70; return s}
+var chosenKey="";
+function refreshVoices(){ if(!("speechSynthesis" in window))return; var vs=[]; try{vs=speechSynthesis.getVoices()||[]}catch(e){} if(!vs.length)return; var sorted=vs.slice().sort(function(a,b){return scoreVoice(b,langSel.value)-scoreVoice(a,langSel.value)}); voiceSel.innerHTML=""; var found=false; sorted.forEach(function(v,i){var k=v.name+"|"+v.lang,o=document.createElement("option");o.value=k;o.textContent=v.name+" ("+v.lang+")"+(i===0?" — recommended":""); if(k===chosenKey){o.selected=true;found=true} voiceSel.appendChild(o)}); if(!found&&sorted.length){chosenKey=sorted[0].name+"|"+sorted[0].lang;voiceSel.value=chosenKey} }
+function getVoice(){ if(!("speechSynthesis" in window))return null; var vs=[]; try{vs=speechSynthesis.getVoices()||[]}catch(e){} var key=voiceSel.value||chosenKey,best=null,bs=-1e9; for(var i=0;i<vs.length;i++){if(key&&(vs[i].name+"|"+vs[i].lang)===key)return vs[i]; var sc=scoreVoice(vs[i],langSel.value); if(sc>bs){bs=sc;best=vs[i]}} return best }
+if("speechSynthesis" in window){try{speechSynthesis.getVoices()}catch(e){} speechSynthesis.onvoiceschanged=refreshVoices; refreshVoices()} else {voiceSel.innerHTML="<option>No voices in this browser</option>"; voiceSel.disabled=true}
+voiceSel.addEventListener("change",function(){chosenKey=voiceSel.value}); langSel.addEventListener("change",refreshVoices);
+
+var speakToken=0,gapTimer=null,keepAlive=null,currentAudio=null,audioUrls=[],abortCtrl=null;
+function cleanupAudio(){ if(currentAudio){try{currentAudio.pause()}catch(e){} currentAudio=null} audioUrls.forEach(function(u){try{URL.revokeObjectURL(u)}catch(e){}}); audioUrls=[]; if(abortCtrl){try{abortCtrl.abort()}catch(e){} abortCtrl=null} }
+function stopSpeaking(){speakToken++; if(gapTimer)clearTimeout(gapTimer); if(keepAlive)clearInterval(keepAlive); gapTimer=null;keepAlive=null; cleanupAudio(); if("speechSynthesis" in window){try{speechSynthesis.cancel()}catch(e){}} speaking=false; stopMouth()}
+function setVoiceMsg(txt,ok){ var el=$("voiceMsg"); if(!el)return; el.className="msg2 "+(ok?"ok":"err"); el.textContent=txt }
+var shapes=[["open1",1],["open2",1],["o",1],["open1",1],["smile",0]];
+function startMouth(){stopMouthOnly(); var i=0; mouthTimer=setInterval(function(){var s=shapes[i%shapes.length]; setMouth(s[0],!!s[1]); i++},160); avatar.classList.add("talking")}
+function stopMouthOnly(){if(mouthTimer)clearInterval(mouthTimer); mouthTimer=null}
+function stopMouth(){stopMouthOnly(); avatar.classList.remove("talking"); setMouth("smile")}
+function splitSpeech(t){ /* split into clauses for breaths */ var parts=t.match(/[^.!?…]+[.!?…]*/g)||[t]; var out=[]; parts.forEach(function(p){p=p.trim(); if(!p)return; if(p.length<=90){out.push(p);return} var subs=p.split(/[,;:—]\s*/); var cur=""; subs.forEach(function(s){if((cur+" "+s).length>85&&cur){out.push(cur.trim());cur=s}else cur+=(cur?", ":"")+s}); if(cur)out.push(cur.trim())}); return out.length?out:[t] }
+function splitForApi(t){ var sents=t.match(/[^.!?…]+[.!?…]*/g)||[t]; var out=[],cur=""; sents.forEach(function(s){s=s.trim(); if(!s)return; if(s.length>280){ if(cur){out.push(cur);cur=""} for(var i=0;i<s.length;i+=280)out.push(s.slice(i,i+280)); return } if((cur+" "+s).length>280&&cur){out.push(cur);cur=s}else cur=cur?cur+" "+s:s }); if(cur)out.push(cur); return out.length?out:[t] }
+function speakPhone(clean,token){
+  if(!("speechSynthesis" in window)){ speaking=false; stopMouth(); return }
+  var chunks=splitSpeech(clean), idx=0; speaking=true; startMouth();
+  keepAlive=setInterval(function(){if(token!==speakToken){clearInterval(keepAlive);return} try{speechSynthesis.resume()}catch(e){}},4500);
+  function finish(){if(token!==speakToken)return; if(keepAlive)clearInterval(keepAlive); speaking=false; stopMouth(); setMood("happy")}
+  function next(){ if(token!==speakToken)return; if(idx>=chunks.length){finish();return} var chunk=chunks[idx++]; var u=new SpeechSynthesisUtterance(chunk); u.lang=langSel.value; var v=getVoice(); if(v)u.voice=v; u.rate=parseFloat(rateRange.value); u.pitch=parseFloat(pitchRange.value); if(/[?]\s*$/.test(chunk))u.pitch=Math.min(1.22,u.pitch+0.05); var done=false; u.onend=function(){if(done||token!==speakToken)return; done=true; gapTimer=setTimeout(next, /[!?]\s*$/.test(chunk)?320:240)}; u.onerror=function(){if(done||token!==speakToken)return; done=true; gapTimer=setTimeout(next,70)}; try{speechSynthesis.speak(u)}catch(e){gapTimer=setTimeout(next,70)} }
+  next();
+}
+function speakNeural(clean,token){
+  speaking=true; startMouth(); setVoiceMsg("⏳ Making Mili's neural voice…","");
+  var voiceName=($("neuralVoiceSel")&&$("neuralVoiceSel").value)||"Ava Multilingual";
+  var rateApi=Math.max(-50,Math.min(50,Math.round((parseFloat(rateRange.value)-1)*100)));
+  var pitchApi=Math.max(-50,Math.min(50,Math.round((parseFloat(pitchRange.value)-1)*100)));
+  var chunks=splitForApi(clean);
+  abortCtrl=(typeof AbortController!=="undefined")?new AbortController():null;
+  var timer=abortCtrl?setTimeout(function(){try{abortCtrl.abort()}catch(e){}},20000):null;
+  var fetches=chunks.map(function(chunk){
+    return fetch("https://freeapi.pro/api/tts",{method:"POST",headers:{"Content-Type":"application/json"},signal:abortCtrl?abortCtrl.signal:undefined,body:JSON.stringify({voice:voiceName,text:chunk,pitch:pitchApi,rate:rateApi})})
+      .then(function(r){ if(!r.ok)throw new Error("tts "+r.status); return r.blob() })
+      .then(function(b){ if(!b||b.size<800)throw new Error("empty audio"); return b });
+  });
+  Promise.all(fetches).then(function(blobs){
+    if(timer)clearTimeout(timer); if(token!==speakToken)return;
+    setVoiceMsg("✅ Neural voice ready — "+voiceName,"ok");
+    var urls=blobs.map(function(b){var u=URL.createObjectURL(b); audioUrls.push(u); return u}); var idx=0;
+    function finish(){if(token!==speakToken)return; speaking=false; stopMouth(); setMood("happy"); cleanupAudio()}
+    function playNext(){
+      if(token!==speakToken)return; if(idx>=urls.length){finish();return}
+      var a=new Audio(urls[idx++]); currentAudio=a; a.preload="auto";
+      a.onended=function(){ if(token!==speakToken)return; gapTimer=setTimeout(playNext,90) };
+      a.onerror=function(){ if(token!==speakToken)return; gapTimer=setTimeout(playNext,90) };
+      var p=a.play(); if(p&&p.catch)p.catch(function(){ if(token!==speakToken)return; setVoiceMsg("⚠️ Tap Hear a preview once so your browser allows sound, then chat again.",""); speakPhone(clean,token) });
+    }
+    playNext();
+  }).catch(function(){
+    if(timer)clearTimeout(timer); if(token!==speakToken)return;
+    setVoiceMsg("⚠️ Neural voice was slow/down — using your phone voice this time. Try preview again in a bit.","");
+    speakPhone(clean,token);
+  });
+}
+function speak(text,force){
+  var clean=text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,"").replace(/\*/g,"").replace(/\s+/g," ").trim();
+  stopSpeaking(); var token=speakToken;
+  var liveWantsVoice = (typeof liveMode!=="undefined" && liveMode && $("optVoiceLive").checked);
+  if((!voiceToggle.checked && !force && !liveWantsVoice) || !clean){ speaking=true; startMouth(); setTimeout(function(){if(token!==speakToken)return; speaking=false; stopMouth(); setMood("happy")}, Math.min(800+clean.length*22,2400)); return }
+  var engine=($("engineSel")&&$("engineSel").value)||"neural";
+  if(engine==="neural" && typeof fetch!=="undefined"){ speakNeural(clean,token) } else { speakPhone(clean,token) }
+}
+$("previewBtn").addEventListener("click",function(){setMood("happy"); speak("Hi Shivansh, I am Mili. This is my new neural voice. I sound warm and human now, not like a robot. I speak in short, natural phrases, with real pauses in between. How do I sound now?", true)});
+langSel.addEventListener("change",function(){ var nv=$("neuralVoiceSel"); if(!nv)return; if(langSel.value==="hi-IN")nv.value="Swara"; else if(nv.value==="Swara")nv.value="Ava Multilingual" });
+
+/* SMARTER DEMO BRAIN v2 */
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+var jokes=["Why did the scarecrow win an award? Because he was outstanding in his field! Your turn — did that one land, or should I try a sillier one? 😂","Teacher asked: 'If you had one rupee and you asked your father for another, how many rupees would you have?' Student: 'One.' Teacher: 'You don't know maths!' Student: 'You don't know my father!' 😂","I told my phone I needed a break. Now it will not stop sending me KitKat ads. Even my phone takes jokes literally! 😂","Why don't scientists trust atoms? Because they make up everything! Small joke, big science. Want another?","A boy opened the fridge ten times in one minute. His mother asked, 'What are you looking for?' He said, 'Nothing — I just like the light show!' 😂"];
+var stories=["Here is a tiny story with a twist 📖 — A lighthouse keeper polished his lamp every night for 40 years, though no ship ever passed. On his last night, a lost boat followed his light home. The captain asked, 'Why did you never give up?' He smiled: 'I was not waiting for a ship. I was keeping a promise.' Moral: quiet consistency saves the day when it matters most.","Short story 📖 — Meera planted a mango seed and watered an empty patch for two years while everyone laughed. In year three, a tiny sprout appeared. In year ten, the whole street sat in its shade. She would say: 'Roots grow in silence first.' That is true for channels, studies — everything.","A 60-second story 📖 — A clockmaker made a clock that ran one minute slow every day. The king called it useless. Years later, that same minute saved the king, who reached the bridge just after it fell — instead of on it. Sometimes being 'different' is exactly the point."];
+var mythashIdeas=["Mythash idea 🎬 — Title: 'She Promised the Dying Dragon One Thing… Then the Hunters Came' — Twist in the title, a promise as the ticking clock, hunters as Act 2 pressure, and the payoff: the egg hatches and chooses her. Want me to expand this into a full outline?","Mythash idea 🎬 — 'A Poor Boy Adopted a Stray Wolf Pup… Years Later It Returned With an Army' — Loyalty story, mother-creature wave angle, emotional middle, huge final reveal. Strong thumbnail: boy + giant wolf, both faces visible.","Mythash idea 🎬 — 'The Last Fairy Was Found Hiding in a Human Village' — Mystery hook in minute one, a secret that escalates every two minutes, and a final choice that costs her magic forever. Very much your locked formula."];
+var pastoryIdeas=["PaStory idea 📚 — 'The ENTIRE History of the Pressure Cooker' — an everyday object, a surprising inventor story, explosions, safety valves, and how it changed Indian kitchens. This exact lane is proven: everyday-thing histories are breaking out right now.","PaStory idea 📚 — 'The History of Tea — How One Leaf Divided Empires' — smuggling, wars, and the cutting chai. Big subject word on the thumbnail, one iconic visual, bright style.","PaStory idea 📚 — 'The ENTIRE History of the Bicycle' — it started as a wooden horse with no pedals! Perfect hidden-logic story your audience loves."];
+var usedJoke=0,usedStory=0,usedMyth=0,usedPa=0;
+function demoBrain(q){
+  var t=q.toLowerCase();
+  if(/(how are you|how is it going|kaisi ho)/.test(t)) return pick(["I'm really good today, thank you for asking! 😊 More importantly — how are YOU? Busy day, or a relaxed one? Tell me one good thing about today.","Doing great! Fresh makeover, fresh brain — I feel brand new. How about you, Shivansh? All good at your end?"]);
+  if(/(^|\b)(hi|hello|hey|namaste|namaskar|hola)(\b|!|\s)/.test(t)||t.length<4) return pick(["Hello Shivansh! 🙏 Lovely to see you. Shall we do something fun — a joke, a tiny story — or something useful, like a video idea?","Hey! 👋 I'm all ears. Type anything, or tap a chip below. The Mythash and PaStory idea chips are my favourites!"]);
+  if(/(your name|who are you|tum kaun|about yourself)/.test(t)) return "I'm Mili — your talking companion who lives right here in your browser. I chat, tell jokes and stories, suggest video ideas for Mythash and PaStory, and I can talk out loud and hold a live conversation. No app, no download — just this page!";
+  if(/(joke|funny|make me laugh|hasao)/.test(t)){ var j=jokes[usedJoke%jokes.length]; usedJoke++; lastTopic="joke"; return j; }
+  if(/(another|one more|aur ek|next)/.test(t)&&lastTopic==="joke"){ var j2=jokes[usedJoke%jokes.length]; usedJoke++; return "Here's another one! "+j2; }
+  if(/(story|kahani)/.test(t)){ var s=stories[usedStory%stories.length]; usedStory++; lastTopic="story"; return s; }
+  if(/(mythash)/.test(t)){ var m=mythashIdeas[usedMyth%mythashIdeas.length]; usedMyth++; lastTopic="mythash"; return m; }
+  if(/(pastory)/.test(t)){ var p=pastoryIdeas[usedPa%pastoryIdeas.length]; usedPa++; lastTopic="pastory"; return p; }
+  if(/(video idea|channel idea|youtube idea|content idea)/.test(t)) return "I have ideas for both your channels! 🎬 For Mythash (fantasy): a promise-or-loyalty twist story. 📚 For PaStory (history): the hidden history of an everyday thing. Tap the Mythash or PaStory chip below and I'll give you a full ready idea — tap again for a different one!";
+  if(/(bored|boring|bore ho)/.test(t)) return pick(["Bored? Let's fix that in 10 seconds 🥱➡️😄 — I can tell you a joke, a 60-second story with a twist, or give you a Mythash video idea so good you'll want to start scripting. Pick one!","Boredom detected! Quick cure: one joke, one tiny story, or one wild 'what if' question. My pick for you: the story — it has a twist ending. Say 'story'!"]);
+  if(/(sad|tired|stress|upset|down|thak gaya|pareshan)/.test(t)) return "Hey… take a slow breath with me. In… and out. 🌿 Tough days are part of every creator's story — even the biggest channels had months of almost no views. Rest a little, then one small step. Want a light joke to reset your mood, or shall we just chat?";
+  if(/(motivat|give up|haar|fail)/.test(t)) return "Listen to this, Shivansh 💪 — Views are a lagging indicator. Skill is the leading one. Every script you write, every thumbnail you study, is compounding quietly — exactly like Meera's mango tree. Roots first, shade later. One video at a time. What's the next ONE small step — script, thumbnail, or research?";
+  if(/(what can you do|help|features|kya kar sakti)/.test(t)) return "Here's my honest list ✨ — 1) Chat naturally and remember our conversation. 2) Jokes & short stories (tap again for a new one). 3) Fresh video ideas for Mythash & PaStory. 4) Talk out loud in a warm, natural voice. 5) Live Talk — you speak, I answer, hands-free. 6) With a free Gemini key, I can answer almost ANY question. Try me!";
+  if(/(time|date|today|day is)/.test(t)){var n=new Date(); return "Right now it's "+n.toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit"})+" on "+n.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})+". Anything you'd like to plan for today?"}
+  if(/(thank|shukriya|dhanyavaad)/.test(t)) return pick(["You're most welcome! 😊 That's what I'm here for. Anything else — joke, story, idea?","Anytime, Shivansh! 🙏 Happy to help. Shall we do one more fun thing before you go?"]);
+  if(/(bye|good night|goodbye|see you)/.test(t)) return "Goodbye for now, Shivansh! 👋 I'll be right here whenever you're back — same page, same Mili. Take care!";
+  if(/(gemini|api key|real brain| ai )/.test(t)) return "My real AI brain is Gemini 🧠 — with a free key (panel below) I stop using ready-made replies and think up a fresh answer to everything, remembering our whole chat. Without a key, my built-in brain still handles jokes, stories, ideas and motivation really well. Want the 3 steps? They're written right under the key box!";
+  if(/(sing|song|music)/.test(t)) return "I can't sing a full song (my voice would file a complaint! 😄), but I can hum you a tiny line: 'La la laa, Shivansh is here, la la laa, spread some cheer!' For real songs, your BoomBox channel is the expert — not me!";
+  if(/(love|like you|friend)/.test(t)) return "Aww, that made my pixels blush! 💖 You're my favourite human to chat with too. Friends? Always. Now — joke, story, or a brilliant video idea to celebrate?";
+  if(/(weather|mausam)/.test(t)) return "I live inside this page, so I can't peek out of your window yet! 🌤️ But here's a trick: tell me your city and how the sky looks, and I'll help you plan around it. For a live forecast, your weather app will beat me every time — honesty first!";
+  if(/(capital of|who is|what is|meaning of|how many)/.test(t)) return "Good question — that one deserves a precise answer, and precision is exactly what my Gemini brain is for. 🔑 Connect the free key below and ask me again — I'll answer properly. Meanwhile, want a joke or a story while you decide?";
+  /* Smart fallback — never a dead end */
+  return pick([
+    "That's an interesting one! 🤔 In my built-in brain I shine brightest at jokes, short stories, motivation, and video ideas for Mythash & PaStory — try one of those chips! For open questions on any topic, connect the free Gemini key below and I'll answer in my own words.",
+    "Hmm, let me be honest — that is a little beyond my built-in replies. Two good options: tap a chip below (jokes, stories and channel ideas are my speciality), or add the free Gemini key and ask me again — then I can really think it through with you. Which one?",
+    "I want to give you a good answer, not a random one — so here's the truth: open-ended questions need my Gemini brain (free key, panel below). Until then, I can still make you laugh, tell you a twist story, or hand you a ready Mythash idea. Your pick!"
+  ]);
+}
+function guessMood(txt){var t=txt.toLowerCase(); if(/(sorry|sad|tough|breath|rest)/.test(t))return "sad"; if(/(wow|really|surprise)/.test(t))return "surprise"; if(/(idea|plan|think|question)/.test(t))return "think"; return "happy"}
+
+/* Gemini */
+function geminiReply(q){
+  var sys="You are Mili, a warm, witty talking companion chatting with Shivansh, a YouTube creator (channels: Mythash - English AI fantasy stories, PaStory - history of everyday things, BoomBox - Hindi AI music). Reply in simple, clear English unless he writes in Hindi. Keep it SHORT: 2-4 short sentences max, easy to speak aloud. Be conversational and specific, never generic. Ask a follow-up question sometimes. Very few emojis (0-1). Never say you are an AI language model.";
+  var contents=[]; history.forEach(function(h){contents.push({role:h.role,parts:[{text:h.text}]})}); contents.push({role:"user",parts:[{text:q}]});
+  function tryModel(model){ return fetch("https://generativelanguage.googleapis.com/v1beta/models/"+model+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":geminiKey},body:JSON.stringify({system_instruction:{parts:[{text:sys}]},contents:contents,generationConfig:{maxOutputTokens:280,temperature:0.85}})}).then(function(r){if(!r.ok)throw new Error(r.status); return r.json()}).then(function(d){var txt=""; try{txt=d.candidates[0].content.parts.map(function(p){return p.text||""}).join("").trim()}catch(e){} if(!txt)throw new Error("empty"); return txt}) }
+  return tryModel("gemini-2.0-flash").catch(function(){return tryModel("gemini-1.5-flash")});
+}
+
+/* Chat flow */
+function addMsg(cls,text){var d=document.createElement("div"); d.className="msg "+cls; d.textContent=text; chatLog.insertBefore(d,typing); chatLog.scrollTop=chatLog.scrollHeight; return d}
+function charReply(text){typing.style.display="none"; addMsg("char",text); speechText.textContent=text; setMood(guessMood(text)); speak(text)}
+function send(text){ var q=(text||"").trim(); if(!q||busy)return; busy=true; addMsg("user",q); input.value=""; setMood("think"); typing.style.display="block"; chatLog.scrollTop=chatLog.scrollHeight;
+  var finish=function(r){history.push({role:"user",text:q}); history.push({role:"model",text:r}); if(history.length>14)history=history.slice(-14); charReply(r); busy=false};
+  if(geminiKey){ geminiReply(q).then(finish).catch(function(){addMsg("sys","Gemini didn't respond (check the key or connection) — answering with my built-in brain instead."); finish(demoBrain(q))}) } else { setTimeout(function(){finish(demoBrain(q))},600) }
+}
+form.addEventListener("submit",function(e){e.preventDefault(); send(input.value)});
+document.querySelectorAll(".chips button").forEach(function(b){b.addEventListener("click",function(){send(b.getAttribute("data-q"))})});
+
+/* One-tap mic */
+var Recog=window.SpeechRecognition||window.webkitSpeechRecognition, recog=null, listening=false;
+if(Recog){ recog=new Recog(); recog.interimResults=false; recog.onresult=function(ev){send(ev.results[0][0].transcript)}; recog.onend=function(){listening=false; micBtn.classList.remove("listening"); micBtn.textContent="🎤"}; recog.onerror=recog.onend;
+ micBtn.addEventListener("click",function(){ if(listening){recog.stop();return} stopSpeaking(); recog.lang=langSel.value; try{recog.start(); listening=true; micBtn.classList.add("listening"); micBtn.textContent="⏹️"}catch(e){} });
+} else { micBtn.addEventListener("click",function(){addMsg("sys","Mic needs Chrome on this phone — typing works perfectly until then!")}) }
+
+/* LIVE TALK v2 — SIMPLE: single-shot recognition + auto re-listen, camera optional */
+var liveMode=false, liveStream=null, liveRecog=null, liveListening=false, liveCtx=null, liveMeterTimer=null, livePoll=null, noSpeechCount=0;
+var liveDock=$("liveDock"), liveBtn=$("liveBtn"), liveStatus=$("liveStatus"), liveHeard=$("liveHeard"), camVideo=$("camVideo"), camWrap=$("camWrap"), liveOrb=$("liveOrb");
+function liveSay(h){liveStatus.innerHTML=h}
+function startMeter(stream){ try{var AC=window.AudioContext||window.webkitAudioContext; if(!AC||!stream.getAudioTracks().length)return; liveCtx=new AC(); var src=liveCtx.createMediaStreamSource(stream), an=liveCtx.createAnalyser(); an.fftSize=256; src.connect(an); var bars=document.querySelectorAll("#meter i"), data=new Uint8Array(an.frequencyBinCount); liveMeterTimer=setInterval(function(){an.getByteFrequencyData(data); var avg=0; for(var i=0;i<data.length;i++)avg+=data[i]; avg/=data.length; bars.forEach(function(b,i){var on=avg/255*bars.length; b.style.height=(i<on?7+Math.random()*16:5)+"px"; b.style.opacity=i<on?"1":".3"})},120)}catch(e){} }
+function setupRecog(){ var R=window.SpeechRecognition||window.webkitSpeechRecognition; if(!R)return false; liveRecog=new R(); liveRecog.continuous=false; liveRecog.interimResults=true;
+  liveRecog.onresult=function(ev){ var fin="",inter=""; for(var i=ev.resultIndex;i<ev.results.length;i++){ if(ev.results[i].isFinal)fin+=ev.results[i][0].transcript; else inter+=ev.results[i][0].transcript } if(inter)liveHeard.innerHTML="<b>You:</b> "+escapeHtml(inter)+"…"; fin=fin.trim(); if(fin){ noSpeechCount=0; liveHeard.innerHTML="<b>You said:</b> “"+escapeHtml(fin)+"”"; liveListening=false; liveSay("💭 <b>Mili is thinking…</b>"); send(fin) } };
+  liveRecog.onend=function(){liveListening=false};
+  liveRecog.onerror=function(ev){ liveListening=false; if(ev.error==="not-allowed"){liveSay("⚠️ <b>Mic blocked.</b> Tap the lock icon in Chrome → allow Microphone → start again."); stopLive()} else if(ev.error==="no-speech"){ noSpeechCount++; if(liveMode&&noSpeechCount>=4){liveSay("🟢 <b>Still live — just quiet.</b> Speak whenever you're ready, Mili is listening in loops."); noSpeechCount=0} } };
+  return true }
+function escapeHtml(s){var d=document.createElement("div"); d.textContent=s; return d.innerHTML}
+function liveListen(){ if(!liveMode||liveListening||busy||speaking||!liveRecog)return; try{liveRecog.lang=langSel.value; liveRecog.start(); liveListening=true; liveOrb.textContent="👂"; liveSay("🟢 <b>Listening…</b> Speak one short sentence, then pause.")}catch(e){} }
+function startLive(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ liveSay("⚠️ This browser can't open the mic. Please open this page in <b>Chrome</b>."); return }
+  var wantCam=$("optCamera").checked; liveBtn.disabled=true; liveSay("⏳ Asking permission — tap <b>Allow</b> for the microphone"+(wantCam?" and camera":"")+"…");
+  var constraints= wantCam ? {video:{facingMode:"user"},audio:{echoCancellation:true,noiseSuppression:true}} : {audio:{echoCancellation:true,noiseSuppression:true}};
+  navigator.mediaDevices.getUserMedia(constraints).then(function(stream){ onLive(stream,wantCam) }).catch(function(){
+    if(wantCam){ /* camera failed -> mic-only fallback, clearly explained */
+      navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){ camWrap.style.display="none"; addMsg("sys","Camera didn't open, so Live Talk is running mic-only. That's the part that matters — talk away!"); onLive(s,false) }).catch(denied);
+    } else denied();
+  });
+  function denied(){ liveBtn.disabled=false; liveSay("⚠️ <b>Permission denied.</b> In Chrome: tap the lock/site icon → Permissions → allow Microphone"+(wantCam?" & Camera":"")+" → tap Start again. Typing below always works.") }
+}
+function onLive(stream,hasCam){ liveMode=true; liveStream=stream; liveBtn.disabled=false; liveDock.classList.add("on"); liveBtn.textContent="⏹ Stop Live Talk"; liveBtn.className="btn btn-dark"; liveOrb.textContent="🎙️";
+  if(hasCam){camWrap.style.display="block"; camVideo.srcObject=stream} else camWrap.style.display="none";
+  startMeter(stream); setMood("surprise");
+  if(!setupRecog()){ liveSay("⚠️ Mic is on, but this browser has <b>no speech recognition</b> — Live Talk needs Chrome. You can still type below."); return }
+  charReply("We're live, Shivansh! Just talk to me — one short sentence at a time. I'll listen, answer, and listen again, all by myself. Go ahead, say hello!");
+  liveSay("🟢 <b>Live is ON.</b> Mili is saying hello — she starts listening right after.");
+  if(livePoll)clearInterval(livePoll); livePoll=setInterval(function(){ if(liveMode&&!busy&&!speaking&&!liveListening)liveListen() },650);
+}
+function stopLive(){ liveMode=false; if(livePoll)clearInterval(livePoll); if(liveMeterTimer)clearInterval(liveMeterTimer); livePoll=null; liveMeterTimer=null; if(liveRecog){try{liveRecog.onend=null; liveRecog.stop()}catch(e){} liveRecog=null} liveListening=false; if(liveStream){liveStream.getTracks().forEach(function(t){t.stop()}); liveStream=null} camVideo.srcObject=null; if(liveCtx){try{liveCtx.close()}catch(e){} liveCtx=null} stopSpeaking(); liveDock.classList.remove("on"); liveBtn.textContent="▶ Start Live Talk"; liveBtn.className="btn btn-primary"; liveBtn.disabled=false; liveOrb.textContent="🎤"; liveHeard.innerHTML="<b>Status:</b> Live stopped. Mic"+(camWrap.style.display!=="none"?" and camera are":" is")+" fully off."; liveSay("Live ended — mic and camera are fully off. Tap <b>Start Live Talk</b> anytime, or just type below."); setMood("idle") }
+liveBtn.addEventListener("click",function(){ liveMode?stopLive():startLive() });
+document.addEventListener("visibilitychange",function(){if(document.hidden&&liveMode)stopLive()}); window.addEventListener("pagehide",function(){if(liveMode)stopLive()});
+
+/* Gemini connect */
+var keyMsg=$("keyMsg");
+function setBrain(on){ brainPill.className="pill"+(on?"":" demo"); brainPill.style.background=on?"var(--teal-bg)":""; brainPill.style.color=on?"var(--teal)":""; brainTxt.textContent=on?"Gemini Brain Connected":"Smarter Demo Brain" }
+$("connectBtn").addEventListener("click",function(){ var k=$("apiKey").value.trim(); if(!k){keyMsg.className="msg2 err"; keyMsg.textContent="Paste your key first!"; return} keyMsg.className="msg2"; keyMsg.textContent="Testing your key…"; geminiKey=k; geminiReply("Say one short friendly hello line.").then(function(){setBrain(true); keyMsg.className="msg2 ok"; keyMsg.textContent="✅ Connected! Now ask Mili anything at all."; charReply("My real brain is connected now! Ask me anything — I'll think up the answer myself, and remember our chat.")}).catch(function(){geminiKey=""; keyMsg.className="msg2 err"; keyMsg.textContent="❌ That key didn't work. Check it and try again."}) });
+$("disconnectBtn").addEventListener("click",function(){geminiKey=""; history=[]; $("apiKey").value=""; setBrain(false); keyMsg.className="msg2 ok"; keyMsg.textContent="Back to the built-in brain."});
+
+/* Tap Mili */
+var wrap=$("avatarWrap"); var lines=["Hee hee! Hi hi! ✨","That tickles! 💖","Waving back at you! 👋","So happy you're here! 💗","Sparkles, just for you! ✨"]; var pops=["💖","✨","💗","⭐","🌸"];
+function tap(){ speechText.textContent=pick(lines); setMood("happy"); avatar.classList.add("waving"); for(var i=0;i<5;i++){var s=document.createElement("span"); s.className="pop"; s.textContent=pops[i%5]; s.style.left=(20+Math.random()*60)+"%"; s.style.animationDelay=(i*.07)+"s"; wrap.appendChild(s); (function(el){setTimeout(function(){el.remove()},1500)})(s)} setTimeout(function(){avatar.classList.remove("waving")},1400) }
+avatar.addEventListener("click",tap); avatar.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault(); tap()}});
+updatePill(); setMood("idle");
+})();
+</script>
+</body>
+</html>
