@@ -371,12 +371,39 @@ function demoBrain(q){
 }
 function guessMood(txt){var t=txt.toLowerCase(); if(/(sorry|sad|tough|breath|rest)/.test(t))return "sad"; if(/(wow|really|surprise)/.test(t))return "surprise"; if(/(idea|plan|think|question)/.test(t))return "think"; return "happy"}
 
-/* Gemini */
+/* Gemini — FIXED: old models gemini-2.0-flash / gemini-1.5-flash are retired (404 for new keys).
+   Use current models with fallback chain + real error details so a valid key is never blamed. */
+var GEMINI_MODELS=["gemini-3.8-flash","gemini-3.7-flash","gemini-2.5-flash","gemini-2.5-flash-lite","gemini-flash-latest"];
+var geminiModelUsed="";
+function geminiErrorInfo(status,bodyText){
+  var msg="",reason="";
+  try{var j=JSON.parse(bodyText); if(j&&j.error){msg=j.error.message||""; reason=(j.error.details&&j.error.details[0]&&j.error.details[0].reason)||j.error.status||""}}catch(e){}
+  var lower=(msg+" "+reason).toLowerCase();
+  if(status===400&&(lower.indexOf("api_key")>-1||lower.indexOf("api key")>-1||reason==="API_KEY_INVALID"))return{code:"bad_key",label:"Google says this API key is invalid. Copy the full key again from AI Studio — no spaces — and try again."};
+  if(status===401||status===403)return{code:"bad_key",label:"Google rejected this key (permission denied). Make sure you copied a Gemini API key from AI Studio, not another Google key."};
+  if(status===404)return{code:"model",label:"That Gemini model is no longer available — trying another model automatically."};
+  if(status===429)return{code:"quota",label:"Free quota / rate limit hit for now. Wait a minute and tap Connect again — your key itself is fine."};
+  if(status>=500)return{code:"server",label:"Google's Gemini server had a hiccup ("+status+"). Wait a few seconds and try again — your key is probably fine."};
+  if(msg)return{code:"api",label:"Gemini error ("+status+"): "+msg.slice(0,180)};
+  return{code:"http",label:"Gemini did not respond (HTTP "+status+"). Check your internet and try again."};
+}
 function geminiReply(q){
   var sys="You are Mili, a warm, witty talking companion chatting with Shivansh, a YouTube creator (channels: Mythash - English AI fantasy stories, PaStory - history of everyday things, BoomBox - Hindi AI music). Reply in simple, clear English unless he writes in Hindi. Keep it SHORT: 2-4 short sentences max, easy to speak aloud. Be conversational and specific, never generic. Ask a follow-up question sometimes. Very few emojis (0-1). Never say you are an AI language model.";
   var contents=[]; history.forEach(function(h){contents.push({role:h.role,parts:[{text:h.text}]})}); contents.push({role:"user",parts:[{text:q}]});
-  function tryModel(model){ return fetch("https://generativelanguage.googleapis.com/v1beta/models/"+model+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":geminiKey},body:JSON.stringify({system_instruction:{parts:[{text:sys}]},contents:contents,generationConfig:{maxOutputTokens:280,temperature:0.85}})}).then(function(r){if(!r.ok)throw new Error(r.status); return r.json()}).then(function(d){var txt=""; try{txt=d.candidates[0].content.parts.map(function(p){return p.text||""}).join("").trim()}catch(e){} if(!txt)throw new Error("empty"); return txt}) }
-  return tryModel("gemini-3.8-flash").catch(function(){return tryModel("gemini-3.7-flash")}).catch(function(){return tryModel("gemini-2.5-flash")});
+  var payload=JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:contents,generationConfig:{maxOutputTokens:280,temperature:0.85}});
+  function tryModel(model){
+    return fetch("https://generativelanguage.googleapis.com/v1beta/models/"+model+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":geminiKey},body:payload})
+    .then(function(r){
+      if(r.ok)return r.json();
+      return r.text().then(function(t){var info=geminiErrorInfo(r.status,t); var err=new Error(info.label); err.code=info.code; err.status=r.status; throw err});
+    })
+    .then(function(d){var txt=""; try{txt=d.candidates[0].content.parts.map(function(p){return p.text||""}).join("").trim()}catch(e){} if(!txt){var err=new Error("Gemini replied empty this time. Try again."); err.code="empty"; throw err} geminiModelUsed=model; return txt});
+  }
+  /* Try the model that already worked first, then the rest in order. Skip remaining models only on a real key error. */
+  var order=GEMINI_MODELS.slice(); if(geminiModelUsed&&order.indexOf(geminiModelUsed)>0){order.splice(order.indexOf(geminiModelUsed),1); order.unshift(geminiModelUsed)}
+  var chain=Promise.reject(new Error("start")); var lastErr=null;
+  order.forEach(function(m){ chain=chain.catch(function(e){ if(e&&e.code==="bad_key")throw e; return tryModel(m).catch(function(err){lastErr=err; throw err}) }) });
+  return chain.catch(function(e){ throw (e&&e.code==="bad_key")?e:(lastErr||e) });
 }
 
 /* Chat flow */
@@ -384,7 +411,7 @@ function addMsg(cls,text){var d=document.createElement("div"); d.className="msg 
 function charReply(text){typing.style.display="none"; addMsg("char",text); speechText.textContent=text; setMood(guessMood(text)); speak(text)}
 function send(text){ var q=(text||"").trim(); if(!q||busy)return; busy=true; addMsg("user",q); input.value=""; setMood("think"); typing.style.display="block"; chatLog.scrollTop=chatLog.scrollHeight;
   var finish=function(r){history.push({role:"user",text:q}); history.push({role:"model",text:r}); if(history.length>14)history=history.slice(-14); charReply(r); busy=false};
-  if(geminiKey){ geminiReply(q).then(finish).catch(function(){addMsg("sys","Gemini didn't respond (check the key or connection) — answering with my built-in brain instead."); finish(demoBrain(q))}) } else { setTimeout(function(){finish(demoBrain(q))},600) }
+  if(geminiKey){ geminiReply(q).then(finish).catch(function(err){addMsg("sys","Gemini didn't respond — "+((err&&err.message)||"check connection")+" Answering with my built-in brain instead."); finish(demoBrain(q))}) } else { setTimeout(function(){finish(demoBrain(q))},600) }
 }
 form.addEventListener("submit",function(e){e.preventDefault(); send(input.value)});
 document.querySelectorAll(".chips button").forEach(function(b){b.addEventListener("click",function(){send(b.getAttribute("data-q"))})});
@@ -433,7 +460,27 @@ document.addEventListener("visibilitychange",function(){if(document.hidden&&live
 /* Gemini connect */
 var keyMsg=$("keyMsg");
 function setBrain(on){ brainPill.className="pill"+(on?"":" demo"); brainPill.style.background=on?"var(--teal-bg)":""; brainPill.style.color=on?"var(--teal)":""; brainTxt.textContent=on?"Gemini Brain Connected":"Smarter Demo Brain" }
-$("connectBtn").addEventListener("click",function(){ var k=$("apiKey").value.trim(); if(!k){keyMsg.className="msg2 err"; keyMsg.textContent="Paste your key first!"; return} keyMsg.className="msg2"; keyMsg.textContent="Testing your key…"; geminiKey=k; geminiReply("Say one short friendly hello line.").then(function(){setBrain(true); keyMsg.className="msg2 ok"; keyMsg.textContent="✅ Connected! Now ask Mili anything at all."; charReply("My real brain is connected now! Ask me anything — I'll think up the answer myself, and remember our chat.")}).catch(function(){geminiKey=""; keyMsg.className="msg2 err"; keyMsg.textContent="❌ That key didn't work. Check it and try again."}) });
+$("connectBtn").addEventListener("click",function(){
+  var raw=$("apiKey").value||"";
+  var k=raw.replace(/\s+/g,"").replace(/^["']+|["']+$/g,"");
+  if(!k){keyMsg.className="msg2 err"; keyMsg.textContent="Paste your key first!"; return}
+  if(k.indexOf("AIza")!==0||k.length<30){keyMsg.className="msg2 err"; keyMsg.textContent="⚠️ That doesn't look like a full Gemini key — it should start with AIza and be one long line. Copy it again from AI Studio (tap the copy icon next to the key) and paste the whole thing."; return}
+  if(k!==raw.trim())$("apiKey").value=k;
+  var btn=$("connectBtn"); btn.disabled=true; btn.textContent="Testing your key…";
+  keyMsg.className="msg2"; keyMsg.textContent="Testing your key with Google… (trying current Gemini models)";
+  geminiKey=k;
+  geminiReply("Say one short friendly hello line.").then(function(){
+    btn.disabled=false; btn.textContent="Connect Gemini";
+    setBrain(true); keyMsg.className="msg2 ok"; keyMsg.textContent="✅ Connected! Gemini is working ("+(geminiModelUsed||"flash")+"). Now ask Mili anything at all.";
+    charReply("My real brain is connected now! Ask me anything — I'll think up the answer myself, and remember our chat.");
+  }).catch(function(err){
+    btn.disabled=false; btn.textContent="Connect Gemini";
+    var code=err&&err.code, label=(err&&err.message)||"";
+    if(code==="bad_key"){ geminiKey=""; keyMsg.className="msg2 err"; keyMsg.textContent="❌ "+label; }
+    else if(code==="quota"){ keyMsg.className="msg2 err"; keyMsg.textContent="⏳ "+label+" Your key was accepted by Google — this is only a limit, not a bad key."; }
+    else { keyMsg.className="msg2 err"; keyMsg.textContent="⚠️ Couldn't connect right now — this is NOT necessarily your key. "+(label||"Check your internet and tap Connect again."); }
+  });
+});
 $("disconnectBtn").addEventListener("click",function(){geminiKey=""; history=[]; $("apiKey").value=""; setBrain(false); keyMsg.className="msg2 ok"; keyMsg.textContent="Back to the built-in brain."});
 
 /* Tap Mili */
