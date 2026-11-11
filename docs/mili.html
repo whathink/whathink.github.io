@@ -376,7 +376,7 @@ function geminiReply(q){
   var sys="You are Mili, a warm, witty talking companion chatting with Shivansh, a YouTube creator (channels: Mythash - English AI fantasy stories, PaStory - history of everyday things, BoomBox - Hindi AI music). Reply in simple, clear English unless he writes in Hindi. Keep it SHORT: 2-4 short sentences max, easy to speak aloud. Be conversational and specific, never generic. Ask a follow-up question sometimes. Very few emojis (0-1). Never say you are an AI language model.";
   var contents=[]; history.forEach(function(h){contents.push({role:h.role,parts:[{text:h.text}]})}); contents.push({role:"user",parts:[{text:q}]});
   function tryModel(model){ return fetch("https://generativelanguage.googleapis.com/v1beta/models/"+model+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":geminiKey},body:JSON.stringify({system_instruction:{parts:[{text:sys}]},contents:contents,generationConfig:{maxOutputTokens:280,temperature:0.85}})}).then(function(r){if(!r.ok)throw new Error(r.status); return r.json()}).then(function(d){var txt=""; try{txt=d.candidates[0].content.parts.map(function(p){return p.text||""}).join("").trim()}catch(e){} if(!txt)throw new Error("empty"); return txt}) }
-  return tryModel("gemini-2.0-flash").catch(function(){return tryModel("gemini-1.5-flash")});
+  return tryModel("gemini-3.8-flash").catch(function(){return tryModel("gemini-3.7-flash")}).catch(function(){return tryModel("gemini-2.5-flash")});
 }
 
 /* Chat flow */
